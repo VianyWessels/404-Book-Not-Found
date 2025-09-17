@@ -11,18 +11,16 @@ public class EnemyAI : MonoBehaviour
     public float bobFrequency = 2f; // Frequency of bobbing
     public int maxHealth = 1; // Health set to 1 for one-hit kill
     public float fallSpeedMultiplier = 2f; // Optional: Make falling faster if needed
-    public float deathDelay = 1.5f; // Time to wait after death before fading (1-2 seconds)
-    public float fadeDuration = 1f; // Time to fade out
-    public GameObject halfModel1; // Assign a pre-sliced half model prefab in Inspector
-    public GameObject halfModel2; // Assign the other half prefab in Inspector
-    public Vector3 separationForce = new Vector3(2f, 0f, 0f); // Force to push halves apart (adjust as needed)
+    public float minFallTime = 3f; // Increased to 3 seconds to allow more fall time
 
     private Transform player;
     private float nextAttackTime = 0f;
     private int currentHealth;
     private Rigidbody rb;
     private bool isDead = false;
-    private Renderer enemyRenderer; // For fading the original model
+    private Renderer enemyRenderer; // For hiding the original model
+    private Collider mainCollider; // To manage the enemy's collider
+    private bool hasFallen = false; // Track if the enemy has landed
 
     void Start()
     {
@@ -33,21 +31,35 @@ public class EnemyAI : MonoBehaviour
         }
         currentHealth = maxHealth;
 
-        // Add Rigidbody for falling physics
-        rb = gameObject.AddComponent<Rigidbody>();
-        rb.useGravity = false; // Flying, so no gravity initially
-        rb.constraints = RigidbodyConstraints.FreezeRotation; // Prevent tumbling if desired
-
-        // Get the renderer for fading (assumes the enemy has a MeshRenderer)
-        enemyRenderer = GetComponentInChildren<Renderer>();
-        if (enemyRenderer == null)
+        // Use existing Rigidbody or add if none
+        rb = GetComponent<Rigidbody>();
+        if (rb == null)
         {
-            Debug.LogError("No Renderer found on enemy or its children! Fading won't work.");
+            rb = gameObject.AddComponent<Rigidbody>();
+            Debug.Log("Added new Rigidbody with constraints: 0, mass: 1");
         }
         else
         {
-            // Set material to transparent for fading (if not already)
-            SetMaterialTransparent(enemyRenderer.material);
+            Debug.Log("Using existing Rigidbody with constraints: " + rb.constraints + ", mass: " + rb.mass);
+        }
+        rb.useGravity = false; // Flying, so no gravity initially
+        rb.constraints &= ~RigidbodyConstraints.FreezeRotation; // Clear FreezeRotation
+        rb.mass = 1f; // Set a reasonable mass
+
+        // Get the renderer and main collider
+        enemyRenderer = GetComponentInChildren<Renderer>();
+        if (enemyRenderer == null)
+        {
+            Debug.LogError("No Renderer found on enemy or its children!");
+        }
+        mainCollider = GetComponent<Collider>();
+        if (mainCollider == null)
+        {
+            Debug.LogError("No Collider found on enemy! Add a Collider (e.g., CapsuleCollider).");
+        }
+        else
+        {
+            Debug.Log("Collider found: " + mainCollider.GetType().Name);
         }
     }
 
@@ -102,127 +114,73 @@ public class EnemyAI : MonoBehaviour
         isDead = true;
         Debug.Log("Enemy died at " + Time.time);
 
-        // Disable collider to prevent further interactions
-        Collider col = GetComponent<Collider>();
-        if (col != null) col.enabled = false;
-
-        // Handle slicing if half models are assigned
-        if (halfModel1 != null && halfModel2 != null)
+        // Hide original renderer immediately (keep collider for collision)
+        if (enemyRenderer != null)
         {
-            // Hide original renderer immediately
-            if (enemyRenderer != null) enemyRenderer.enabled = false;
-
-            // Instantiate halves
-            GameObject h1 = Instantiate(halfModel1, transform.position, transform.rotation);
-            GameObject h2 = Instantiate(halfModel2, transform.position, transform.rotation);
-
-            // Add Rigidbodies to halves for falling
-            Rigidbody rb1 = h1.AddComponent<Rigidbody>();
-            Rigidbody rb2 = h2.AddComponent<Rigidbody>();
-            rb1.useGravity = true;
-            rb2.useGravity = true;
-
-            // Apply separation force
-            rb1.AddForce(separationForce, ForceMode.Impulse);
-            rb2.AddForce(-separationForce, ForceMode.Impulse);
-
-            // Ensure materials are set for fading on halves
-            Renderer h1Renderer = h1.GetComponentInChildren<Renderer>();
-            Renderer h2Renderer = h2.GetComponentInChildren<Renderer>();
-            if (h1Renderer != null) SetMaterialTransparent(h1Renderer.material);
-            if (h2Renderer != null) SetMaterialTransparent(h2Renderer.material);
-
-            // Start fading and destruction on halves independently
-            StartCoroutine(FadeAndDestroyAfterDelay(h1, deathDelay, fadeDuration));
-            StartCoroutine(FadeAndDestroyAfterDelay(h2, deathDelay, fadeDuration));
-
-            // Destroy original enemy object after spawning halves
-            Destroy(gameObject);
+            enemyRenderer.enabled = false;
+            Debug.Log("Renderer disabled on death.");
         }
         else
         {
-            // No slicing: Fall with original model
-            if (rb != null)
-            {
-                rb.useGravity = true;
-                rb.linearVelocity = Vector3.down * fallSpeedMultiplier; // Optional initial downward push
-            }
-
-            // Start fading after delay
-            StartCoroutine(FadeAndDestroyAfterDelay(gameObject, deathDelay, fadeDuration));
+            Debug.LogWarning("No renderer to disable on death!");
         }
+
+        // Enable ragdoll-like fall
+        if (rb != null)
+        {
+            rb.useGravity = true;
+            Debug.Log("Gravity enabled on Rigidbody: " + rb.useGravity);
+            rb.linearVelocity = Vector3.down * fallSpeedMultiplier; // Initial downward push
+            rb.angularVelocity = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)); // Add random rotation
+            Debug.Log("Rigidbody velocity set to: " + rb.linearVelocity + ", angularVelocity: " + rb.angularVelocity);
+        }
+        else
+        {
+            Debug.LogError("Rigidbody is null on death!");
+        }
+
+        // Start fall monitoring
+        StartCoroutine(MonitorFallAndDestroy());
     }
 
-    private IEnumerator FadeAndDestroyAfterDelay(GameObject obj, float delay, float fadeTime)
+    private IEnumerator MonitorFallAndDestroy()
     {
-        Debug.Log("Starting fade coroutine for: " + obj.name + " at " + Time.time);
+        float fallStartTime = Time.time;
+        Debug.Log("Starting fall monitoring for: " + gameObject.name + " at " + fallStartTime);
 
-        // Wait for the delay (1-2 seconds)
-        yield return new WaitForSeconds(delay);
+        // Wait for at least minFallTime
+        yield return new WaitForSeconds(minFallTime);
 
-        // Get the renderer of the object (original or half)
-        Renderer objRenderer = obj.GetComponentInChildren<Renderer>();
-        if (objRenderer == null)
+        // Check if the enemy has hit the ground or time has passed
+        if (!hasFallen)
         {
-            Debug.LogWarning("No renderer found on " + obj.name + ", forcing destruction at " + Time.time);
-            Destroy(obj);
-            yield break;
+            Debug.LogWarning("Enemy did not detect ground collision, forcing destruction after minFallTime at " + Time.time);
         }
-
-        // Get the material to fade
-        Material mat = objRenderer.material;
-        if (mat == null)
+        else
         {
-            Debug.LogWarning("No material found on " + obj.name + ", forcing destruction at " + Time.time);
-            Destroy(obj);
-            yield break;
+            Debug.Log("Enemy landed, proceeding to destroy at " + Time.time);
         }
-
-        // Store the original color
-        Color startColor = mat.color;
-        float elapsed = 0f;
-
-        // Fade out over fadeDuration
-        while (elapsed < fadeTime)
-        {
-            elapsed += Time.deltaTime;
-            float alpha = Mathf.Lerp(1f, 0f, elapsed / fadeTime);
-            mat.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
-            yield return null;
-        }
-
-        // Ensure the object is fully transparent
-        mat.color = new Color(startColor.r, startColor.g, startColor.b, 0f);
 
         // Attempt to destroy the object
-        Debug.Log("Attempting to destroy " + obj.name + " at " + Time.time);
-        Destroy(obj);
+        Debug.Log("Attempting to destroy " + gameObject.name + " at " + Time.time);
+        Destroy(gameObject);
 
         // Fallback: Check if still present and force destroy
         yield return new WaitForSeconds(0.1f);
-        if (obj != null)
+        if (gameObject != null)
         {
-            Debug.LogWarning("Forced destruction of " + obj.name + " at " + Time.time + " due to persistence");
-            Destroy(obj);
+            Debug.LogWarning("Forced destruction of " + gameObject.name + " at " + Time.time + " due to persistence");
+            Destroy(gameObject);
         }
-    }
-
-    private void SetMaterialTransparent(Material mat)
-    {
-        if (mat == null) return;
-
-        mat.SetFloat("_Mode", 3f); // Set to Fade mode
-        mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-        mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-        mat.SetInt("_ZWrite", 0);
-        mat.DisableKeyword("_ALPHATEST_ON");
-        mat.EnableKeyword("_ALPHABLEND_ON");
-        mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-        mat.renderQueue = 3000;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Optional: If you want to stop movement on ground hit, but since we're using a timer, not necessary
+        // Detect when the enemy hits the ground
+        if (!hasFallen && collision.gameObject.CompareTag("Ground"))
+        {
+            hasFallen = true;
+            Debug.Log("Enemy collided with ground at " + Time.time);
+        }
     }
 }
