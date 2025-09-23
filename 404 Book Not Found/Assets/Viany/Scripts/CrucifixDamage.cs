@@ -7,9 +7,11 @@ public class CrucifixDamage : MonoBehaviour
     public PlayerHealth playerhealth;
     public Collider rangeCollider;
     public LayerMask playerLayer;
+    private WaitForSeconds delay;
 
     private void Start()
     {
+        delay = new (0.5f);
         if (rangeCollider == null)
         {
             return;
@@ -32,7 +34,7 @@ public class CrucifixDamage : MonoBehaviour
                 playerhealth.TakeDamage(damage);
             }
 
-            yield return new WaitForSeconds(0.5f);
+            yield return delay;
         }
     }
 }

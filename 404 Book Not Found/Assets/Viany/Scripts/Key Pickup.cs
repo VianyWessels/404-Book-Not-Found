@@ -25,14 +25,6 @@ public class KeyPickup : MonoBehaviour
 
     private void Pickup(KeyItem key)
     {
-        if (key == null) return;
-
-        if (KeyInventory.Instance == null)
-        {
-            GameObject go = new GameObject("KeyInventory");
-            go.AddComponent<KeyInventory>();
-        }
-
         KeyInventory.Instance.AddKey(key.keyID);
 
         hotbar.SetKey(key);
