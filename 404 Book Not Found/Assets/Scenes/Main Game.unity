@@ -199,6 +199,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3809290092336128834, guid: 32f3f7af2a80d7d4a8ca8ee5157b467c, type: 3}
   m_PrefabInstance: {fileID: 1410397602}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &292050466 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4130484376933890520, guid: 67e5be8b65e0c114590048e38cce2cfd, type: 3}
+  m_PrefabInstance: {fileID: 328519496}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &304212803
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,7 +285,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1610336443}
     m_Modifications:
     - target: {fileID: 4130484376933890520, guid: 67e5be8b65e0c114590048e38cce2cfd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -300,15 +305,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4130484376933890520, guid: 67e5be8b65e0c114590048e38cce2cfd, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4130484376933890520, guid: 67e5be8b65e0c114590048e38cce2cfd, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4130484376933890520, guid: 67e5be8b65e0c114590048e38cce2cfd, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4130484376933890520, guid: 67e5be8b65e0c114590048e38cce2cfd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2170,7 +2175,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1610336443}
   m_Layer: 0
-  m_Name: Level
+  m_Name: Map
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2200,6 +2205,7 @@ Transform:
   - {fileID: 1100153553}
   - {fileID: 2005660316}
   - {fileID: 1744105040}
+  - {fileID: 292050466}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1744105039
@@ -2781,4 +2787,3 @@ SceneRoots:
   - {fileID: 683981738}
   - {fileID: 1610336443}
   - {fileID: 916402979}
-  - {fileID: 328519496}
