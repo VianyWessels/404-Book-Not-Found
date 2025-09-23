@@ -3,84 +3,95 @@ using System.Collections;
 
 public class EnemyAI : MonoBehaviour
 {
-    public float moveSpeed = 5f; // Speed of the flying enemy
-    public float attackRange = 1f; // Range to attack the player
-    public int attackDamage = 10; // Damage dealt to player
-    public float attackCooldown = 2f; // Time between attacks
-    public float bobAmplitude = 0.5f; // Amplitude of bobbing motion for flying effect
-    public float bobFrequency = 2f; // Frequency of bobbing
-    public int maxHealth = 1; // Health set to 1 for one-hit kill
-    public float fallSpeedMultiplier = 2f; // Optional: Make falling faster if needed
-    public float minFallTime = 3f; // Increased to 3 seconds to allow more fall time
+    [Header("Movement & Combat")]
+    public float moveSpeed = 5f;
+    public float attackRange = 1f;
+    public int attackDamage = 1;        // Damage to player per attack
+    public float attackCooldown = 2f;
+    public float bobAmplitude = 0.5f;
+    public float bobFrequency = 2f;
+    public int maxHealth = 1;
+    public float detectionRange = 10f;
+
+    [Header("Death / Falling")]
+    public float fallSpeedMultiplier = 2f;
+    public float minFallTime = 3f;
+    public float splitForce = 3f;
+    public float bounceForce = 1.5f;
+    public GameObject leftHalf;
+    public GameObject rightHalf;
 
     private Transform player;
     private float nextAttackTime = 0f;
     private int currentHealth;
     private Rigidbody rb;
     private bool isDead = false;
-    private Renderer enemyRenderer; // For hiding the original model
-    private Collider mainCollider; // To manage the enemy's collider
-    private bool hasFallen = false; // Track if the enemy has landed
+    private Collider mainCollider;
+    private Renderer enemyRenderer;
+    private bool leftBounced = false;
+    private bool rightBounced = false;
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         if (player == null)
-        {
             Debug.LogError("Player not found! Make sure the player has the 'Player' tag.");
-        }
+
         currentHealth = maxHealth;
 
-        // Use existing Rigidbody or add if none
         rb = GetComponent<Rigidbody>();
         if (rb == null)
-        {
             rb = gameObject.AddComponent<Rigidbody>();
-            Debug.Log("Added new Rigidbody with constraints: 0, mass: 1");
-        }
-        else
-        {
-            Debug.Log("Using existing Rigidbody with constraints: " + rb.constraints + ", mass: " + rb.mass);
-        }
-        rb.useGravity = false; // Flying, so no gravity initially
-        rb.constraints &= ~RigidbodyConstraints.FreezeRotation; // Clear FreezeRotation
-        rb.mass = 1f; // Set a reasonable mass
 
-        // Get the renderer and main collider
-        enemyRenderer = GetComponentInChildren<Renderer>();
-        if (enemyRenderer == null)
-        {
-            Debug.LogError("No Renderer found on enemy or its children!");
-        }
+        rb.useGravity = false;
+        rb.constraints &= ~RigidbodyConstraints.FreezeRotation;
+        rb.mass = 1f;
+
         mainCollider = GetComponent<Collider>();
         if (mainCollider == null)
-        {
-            Debug.LogError("No Collider found on enemy! Add a Collider (e.g., CapsuleCollider).");
-        }
-        else
-        {
-            Debug.Log("Collider found: " + mainCollider.GetType().Name);
-        }
+            Debug.LogError("No Collider found on enemy!");
+
+        enemyRenderer = GetComponentInChildren<Renderer>();
+        if (enemyRenderer == null)
+            Debug.LogWarning("No renderer found on enemy or children.");
+
+        if (leftHalf != null) leftHalf.SetActive(false);
+        if (rightHalf != null) rightHalf.SetActive(false);
     }
 
     void Update()
     {
         if (isDead || player == null) return;
 
-        // Move towards the player
-        Vector3 direction = player.position - transform.position;
-        direction.Normalize();
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        if (distance > detectionRange)
+        {
+            IdleBehavior();
+        }
+        else
+        {
+            MoveAndAttackPlayer(distance);
+        }
+    }
+
+    private void IdleBehavior()
+    {
+        float bob = Mathf.Sin(Time.time * bobFrequency) * bobAmplitude;
+        transform.position += new Vector3(0f, bob * Time.deltaTime, 0f);
+        transform.Rotate(Vector3.up * Time.deltaTime * 20f);
+    }
+
+    private void MoveAndAttackPlayer(float distance)
+    {
+        Vector3 direction = (player.position - transform.position).normalized;
         transform.position += direction * moveSpeed * Time.deltaTime;
 
-        // Add bobbing for flying effect
         float bob = Mathf.Sin(Time.time * bobFrequency) * bobAmplitude;
         transform.position += new Vector3(0f, bob * Time.deltaTime, 0f);
 
-        // Look at the player
         transform.LookAt(player);
 
-        // Attack if in range
-        float distance = Vector3.Distance(transform.position, player.position);
         if (distance <= attackRange && Time.time >= nextAttackTime)
         {
             AttackPlayer();
@@ -90,11 +101,17 @@ public class EnemyAI : MonoBehaviour
 
     private void AttackPlayer()
     {
-        PlayerDamage playerDamage = player.GetComponent<PlayerDamage>();
-        if (playerDamage != null)
+        if (player == null) return;
+
+        PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+        if (playerHealth != null)
         {
-            playerDamage.TakeDamage(attackDamage);
-            Debug.Log("Enemy attacked player!");
+            playerHealth.TakeDamage(1); // Enemy deals 1 damage per attack
+            Debug.Log("Enemy damaged player! Current health: " + playerHealth.GetCurrentHealth());
+        }
+        else
+        {
+            Debug.LogWarning("PlayerHealth component not found on the player!");
         }
     }
 
@@ -104,83 +121,73 @@ public class EnemyAI : MonoBehaviour
 
         currentHealth -= amount;
         if (currentHealth <= 0)
-        {
             Die();
-        }
     }
 
     private void Die()
     {
         isDead = true;
-        Debug.Log("Enemy died at " + Time.time);
 
-        // Hide original renderer immediately (keep collider for collision)
         if (enemyRenderer != null)
-        {
             enemyRenderer.enabled = false;
-            Debug.Log("Renderer disabled on death.");
-        }
-        else
+
+        if (mainCollider != null)
+            mainCollider.enabled = false;
+
+        // Split into halves
+        if (leftHalf != null)
         {
-            Debug.LogWarning("No renderer to disable on death!");
+            leftHalf.SetActive(true);
+            Rigidbody rbLeft = leftHalf.GetComponent<Rigidbody>();
+            if (rbLeft != null)
+            {
+                rbLeft.isKinematic = false;
+                rbLeft.linearVelocity = (Vector3.left + Vector3.up) * splitForce;
+                rbLeft.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
+            }
         }
 
-        // Enable ragdoll-like fall
-        if (rb != null)
+        if (rightHalf != null)
         {
-            rb.useGravity = true;
-            Debug.Log("Gravity enabled on Rigidbody: " + rb.useGravity);
-            rb.linearVelocity = Vector3.down * fallSpeedMultiplier; // Initial downward push
-            rb.angularVelocity = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)); // Add random rotation
-            Debug.Log("Rigidbody velocity set to: " + rb.linearVelocity + ", angularVelocity: " + rb.angularVelocity);
-        }
-        else
-        {
-            Debug.LogError("Rigidbody is null on death!");
+            rightHalf.SetActive(true);
+            Rigidbody rbRight = rightHalf.GetComponent<Rigidbody>();
+            if (rbRight != null)
+            {
+                rbRight.isKinematic = false;
+                rbRight.linearVelocity = (Vector3.right + Vector3.up) * splitForce;
+                rbRight.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
+            }
         }
 
-        // Start fall monitoring
+        rb.useGravity = false; // Main enemy body stays
         StartCoroutine(MonitorFallAndDestroy());
     }
 
     private IEnumerator MonitorFallAndDestroy()
     {
-        float fallStartTime = Time.time;
-        Debug.Log("Starting fall monitoring for: " + gameObject.name + " at " + fallStartTime);
-
-        // Wait for at least minFallTime
         yield return new WaitForSeconds(minFallTime);
-
-        // Check if the enemy has hit the ground or time has passed
-        if (!hasFallen)
-        {
-            Debug.LogWarning("Enemy did not detect ground collision, forcing destruction after minFallTime at " + Time.time);
-        }
-        else
-        {
-            Debug.Log("Enemy landed, proceeding to destroy at " + Time.time);
-        }
-
-        // Attempt to destroy the object
-        Debug.Log("Attempting to destroy " + gameObject.name + " at " + Time.time);
         Destroy(gameObject);
-
-        // Fallback: Check if still present and force destroy
-        yield return new WaitForSeconds(0.1f);
-        if (gameObject != null)
-        {
-            Debug.LogWarning("Forced destruction of " + gameObject.name + " at " + Time.time + " due to persistence");
-            Destroy(gameObject);
-        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Detect when the enemy hits the ground
-        if (!hasFallen && collision.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.CompareTag("Ground"))
         {
-            hasFallen = true;
-            Debug.Log("Enemy collided with ground at " + Time.time);
+            if (leftHalf != null && !leftBounced)
+            {
+                Rigidbody rbLeft = leftHalf.GetComponent<Rigidbody>();
+                if (rbLeft != null)
+                    rbLeft.linearVelocity = new Vector3(rbLeft.linearVelocity.x, bounceForce, rbLeft.linearVelocity.z);
+                leftBounced = true;
+            }
+
+            if (rightHalf != null && !rightBounced)
+            {
+                Rigidbody rbRight = rightHalf.GetComponent<Rigidbody>();
+                if (rbRight != null)
+                    rbRight.linearVelocity = new Vector3(rbRight.linearVelocity.x, bounceForce, rbRight.linearVelocity.z);
+                rightBounced = true;
+            }
         }
     }
 }
