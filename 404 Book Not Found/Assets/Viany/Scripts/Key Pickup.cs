@@ -5,23 +5,14 @@ public class KeyPickup : MonoBehaviour
 {
     public KeyItem currentKeyInRange;
     public bool pickupOnEnter = false;
-    public Hotbar hotbar; // assign your hotbar in the inspector
+    public Hotbar hotbar;
 
-    private PlayerInput playerInput;
-    private InputAction interactAction;
+    [SerializeField] private PlayerInput playerInput;
+    [SerializeField] private InputAction interactAction;
 
     private void Awake()
     {
-        playerInput = GetComponent<PlayerInput>();
-
-        if (playerInput != null)
-        {
-            interactAction = playerInput.actions["Interact"]; // must exist in your Input Actions asset
-        }
-        else
-        {
-            Debug.LogWarning("PlayerInput component not found on this GameObject.");
-        }
+        interactAction = playerInput.actions["Interact"];
     }
 
     private void Update()
@@ -36,7 +27,6 @@ public class KeyPickup : MonoBehaviour
     {
         if (key == null) return;
 
-        // Ensure KeyInventory exists
         if (KeyInventory.Instance == null)
         {
             GameObject go = new GameObject("KeyInventory");
@@ -45,11 +35,7 @@ public class KeyPickup : MonoBehaviour
 
         KeyInventory.Instance.AddKey(key.keyID);
 
-        // Update hotbar
-        if (hotbar != null)
-        {
-            hotbar.SetKey(key);
-        }
+        hotbar.SetKey(key);
 
         Destroy(key.gameObject);
         currentKeyInRange = null;

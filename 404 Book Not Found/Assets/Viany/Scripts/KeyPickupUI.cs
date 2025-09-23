@@ -11,7 +11,7 @@ public class KeyPickupUI : MonoBehaviour
 
     private void Start()
     {
-        if (uiPanel != null) uiPanel.SetActive(false);
+        uiPanel.SetActive(false);
         keyPickup = GetComponent<KeyPickup>();
     }
 
@@ -21,14 +21,12 @@ public class KeyPickupUI : MonoBehaviour
 
         if (keyPickup.currentKeyInRange != null)
         {
-            Debug.Log("Key in range! Popup zou nu zichtbaar moeten zijn.");
-            if (uiPanel != null && !uiPanel.activeSelf) uiPanel.SetActive(true);
-            if (uiText != null) uiText.text = message;
+            uiPanel.SetActive(true);
+            uiText.text = message;
         }
         else
         {
-            if (uiPanel != null && uiPanel.activeSelf) uiPanel.SetActive(false);
+            uiPanel.SetActive(false);
         }
     }
-
 }

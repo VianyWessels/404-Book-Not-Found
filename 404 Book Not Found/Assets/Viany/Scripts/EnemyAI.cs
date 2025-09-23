@@ -3,65 +3,46 @@ using System.Collections;
 
 public class EnemyAI : MonoBehaviour
 {
-    [Header("Movement & Combat")]
-    public float moveSpeed = 5f;
-    public float attackRange = 1f;
-    public int attackDamage = 1;        // Damage to player per attack
-    public float attackCooldown = 2f;
-    public float bobAmplitude = 0.5f;
-    public float bobFrequency = 2f;
-    public int maxHealth = 1;
-    public float detectionRange = 10f;
+    public float moveSpeed;
+    public float attackRange;
+    public int attackDamage;
+    public float attackCooldown;
+    public float bobAmplitude;
+    public float bobFrequency;
+    public int maxHealth;
+    public float detectionRange;
 
-    [Header("Death / Falling")]
-    public float fallSpeedMultiplier = 2f;
-    public float minFallTime = 3f;
-    public float splitForce = 3f;
-    public float bounceForce = 1.5f;
+    public float fallSpeedMultiplier;
+    public float minFallTime;
+    public float splitForce;
+    public float bounceForce;
     public GameObject leftHalf;
     public GameObject rightHalf;
+    public PlayerHealth playerHealth;
 
-    private Transform player;
-    private float nextAttackTime = 0f;
+    [SerializeField] private Transform player;
+    private float nextAttackTime;
     private int currentHealth;
-    private Rigidbody rb;
-    private bool isDead = false;
-    private Collider mainCollider;
-    private Renderer enemyRenderer;
-    private bool leftBounced = false;
-    private bool rightBounced = false;
+    [SerializeField] private Rigidbody rb;
+    private bool isDead;
+    [SerializeField] private Collider mainCollider;
+    [SerializeField] private Renderer enemyRenderer;
+    private bool leftBounced;
+    private bool rightBounced;
 
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        if (player == null)
-            Debug.LogError("Player not found! Make sure the player has the 'Player' tag.");
-
         currentHealth = maxHealth;
-
-        rb = GetComponent<Rigidbody>();
-        if (rb == null)
-            rb = gameObject.AddComponent<Rigidbody>();
-
-        rb.useGravity = false;
-        rb.constraints &= ~RigidbodyConstraints.FreezeRotation;
-        rb.mass = 1f;
-
-        mainCollider = GetComponent<Collider>();
-        if (mainCollider == null)
-            Debug.LogError("No Collider found on enemy!");
-
-        enemyRenderer = GetComponentInChildren<Renderer>();
-        if (enemyRenderer == null)
-            Debug.LogWarning("No renderer found on enemy or children.");
-
-        if (leftHalf != null) leftHalf.SetActive(false);
-        if (rightHalf != null) rightHalf.SetActive(false);
+        leftHalf.SetActive(false);
+        rightHalf.SetActive(false);
     }
 
     void Update()
     {
-        if (isDead || player == null) return;
+        if (isDead)
+        {
+            return;
+        }
 
         float distance = Vector3.Distance(transform.position, player.position);
 
@@ -101,65 +82,50 @@ public class EnemyAI : MonoBehaviour
 
     private void AttackPlayer()
     {
-        if (player == null) return;
-
-        PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
         if (playerHealth != null)
         {
-            playerHealth.TakeDamage(1); // Enemy deals 1 damage per attack
-            Debug.Log("Enemy damaged player! Current health: " + playerHealth.GetCurrentHealth());
-        }
-        else
-        {
-            Debug.LogWarning("PlayerHealth component not found on the player!");
+            playerHealth.TakeDamage(1);
         }
     }
 
     public void TakeDamage(int amount)
     {
-        if (isDead) return;
-
+        if (isDead)
+        {
+            return;
+        }
         currentHealth -= amount;
         if (currentHealth <= 0)
+        {
             Die();
+        }
     }
 
     private void Die()
     {
         isDead = true;
+        enemyRenderer.enabled = false;
+        mainCollider.enabled = false;
 
-        if (enemyRenderer != null)
-            enemyRenderer.enabled = false;
-
-        if (mainCollider != null)
-            mainCollider.enabled = false;
-
-        // Split into halves
-        if (leftHalf != null)
+        leftHalf.SetActive(true);
+        Rigidbody rbLeft = leftHalf.GetComponent<Rigidbody>();
+        if (rbLeft != null)
         {
-            leftHalf.SetActive(true);
-            Rigidbody rbLeft = leftHalf.GetComponent<Rigidbody>();
-            if (rbLeft != null)
-            {
-                rbLeft.isKinematic = false;
-                rbLeft.linearVelocity = (Vector3.left + Vector3.up) * splitForce;
-                rbLeft.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
-            }
+            rbLeft.isKinematic = false;
+            rbLeft.linearVelocity = (Vector3.left + Vector3.up) * splitForce;
+            rbLeft.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
         }
 
-        if (rightHalf != null)
+        rightHalf.SetActive(true);
+        Rigidbody rbRight = rightHalf.GetComponent<Rigidbody>();
+        if (rbRight != null)
         {
-            rightHalf.SetActive(true);
-            Rigidbody rbRight = rightHalf.GetComponent<Rigidbody>();
-            if (rbRight != null)
-            {
-                rbRight.isKinematic = false;
-                rbRight.linearVelocity = (Vector3.right + Vector3.up) * splitForce;
-                rbRight.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
-            }
+            rbRight.isKinematic = false;
+            rbRight.linearVelocity = (Vector3.right + Vector3.up) * splitForce;
+            rbRight.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
         }
 
-        rb.useGravity = false; // Main enemy body stays
+        rb.useGravity = false;
         StartCoroutine(MonitorFallAndDestroy());
     }
 
@@ -173,7 +139,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            if (leftHalf != null && !leftBounced)
+            if (!leftBounced)
             {
                 Rigidbody rbLeft = leftHalf.GetComponent<Rigidbody>();
                 if (rbLeft != null)
@@ -181,7 +147,7 @@ public class EnemyAI : MonoBehaviour
                 leftBounced = true;
             }
 
-            if (rightHalf != null && !rightBounced)
+            if (!rightBounced)
             {
                 Rigidbody rbRight = rightHalf.GetComponent<Rigidbody>();
                 if (rbRight != null)

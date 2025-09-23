@@ -280,6 +280,10 @@ MonoBehaviour:
   bounceForce: 1.5
   leftHalf: {fileID: 3242250802450732288}
   rightHalf: {fileID: 8189281359653111309}
+  player: {fileID: 0}
+  rb: {fileID: 3378876382635972387}
+  mainCollider: {fileID: 2559223410375168356}
+  enemyRenderer: {fileID: 3553147505715209100}
 --- !u!54 &3378876382635972387
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -305,7 +309,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!1 &8189281359653111309
 GameObject:

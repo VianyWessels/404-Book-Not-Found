@@ -4,29 +4,27 @@ using System.Collections;
 
 public class PlayerDamage : MonoBehaviour
 {
-    [Header("Attack Settings")]
-    public int attackDamage = 50;          // Manual attack damage
-    public float attackRange = 2f;         // Range of manual attack
-    public float attackCooldown = 1f;      // Cooldown for attacks
-    public GameObject hitboxChild;         // Assign hitbox GameObject
-    public int hitboxDamage = 1;           // Damage dealt by hitbox
-    public float hitboxDuration = 1f;      // How long hitbox stays active
+    public int attackDamage;
+    public int hitboxDamage;
 
-    private float nextAttackTime = 0f;
+    public float attackRange;
+    public float attackCooldown;
+    public float hitboxDuration;
+    private float nextAttackTime;
+
+    public GameObject hitboxChild;
 
     void Start()
     {
         if (hitboxChild != null)
         {
             BoxCollider hitbox = hitboxChild.GetComponent<BoxCollider>();
-            if (hitbox != null)
-                hitbox.isTrigger = true;
+            hitbox.isTrigger = true;
 
             hitboxChild.SetActive(false);
         }
     }
 
-    // Called by Input System
     public void OnAttack(InputValue value)
     {
         if (value.isPressed && Time.time >= nextAttackTime)
@@ -54,11 +52,9 @@ public class PlayerDamage : MonoBehaviour
             if (hitCollider.CompareTag("Enemy"))
             {
                 EnemyAI enemy = hitCollider.GetComponent<EnemyAI>();
-                if (enemy != null)
-                    enemy.TakeDamage(attackDamage);
+                enemy.TakeDamage(attackDamage);
             }
         }
-        Debug.Log("Player attacked!");
     }
 
     private void OnTriggerEnter(Collider other)
@@ -68,8 +64,7 @@ public class PlayerDamage : MonoBehaviour
         if (other.CompareTag("Enemy"))
         {
             EnemyAI enemy = other.GetComponent<EnemyAI>();
-            if (enemy != null)
-                enemy.TakeDamage(hitboxDamage);
+            enemy.TakeDamage(hitboxDamage);
         }
     }
 }

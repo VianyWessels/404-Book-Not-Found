@@ -4,25 +4,19 @@ using TMPro;
 
 public class Hotbar : MonoBehaviour
 {
-    public Image icon;              // The UI Image for the key sprite
-    public TextMeshProUGUI label;   // Optional: show key name
+    public Image icon;
+    public TextMeshProUGUI label;
 
     private string currentKeyID;
 
     public void SetKey(KeyItem key)
     {
-        if (key == null) return;
-
         currentKeyID = key.keyID;
 
-        if (label != null)
-            label.text = currentKeyID;
+        label.text = currentKeyID;
 
-        if (icon != null)
-        {
-            icon.sprite = key.keySprite; // Set the sprite of the UI Image
-            icon.enabled = true;
-        }
+        icon.sprite = key.keySprite;
+        icon.enabled = true;
     }
 
     public string GetCurrentKey()
@@ -32,12 +26,7 @@ public class Hotbar : MonoBehaviour
 
     public void Clear()
     {
-        currentKeyID = null;
-
-        if (label != null)
-            label.text = "";
-
-        if (icon != null)
-            icon.enabled = false;
+        label.text = "";
+        icon.enabled = false;
     }
 }

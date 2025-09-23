@@ -3,15 +3,15 @@ using System.Collections;
 
 public class CrucifixDamage : MonoBehaviour
 {
-    public int damage = 1;       // Damage applied per second
-    public Collider rangeCollider;         // Assign the range object’s collider here
-    public LayerMask playerLayer;         // Player layer for detection
+    public int damage;
+    public PlayerHealth playerhealth;
+    public Collider rangeCollider;
+    public LayerMask playerLayer;
 
     private void Start()
     {
         if (rangeCollider == null)
         {
-            Debug.LogWarning("Range collider not assigned!");
             return;
         }
 
@@ -22,34 +22,17 @@ public class CrucifixDamage : MonoBehaviour
     {
         while (true)
         {
-            if (rangeCollider != null)
+            Vector3 center = rangeCollider.bounds.center;
+            float radius = rangeCollider.bounds.extents.x;
+
+            Collider[] hits = Physics.OverlapSphere(center, radius, playerLayer);
+
+            foreach (Collider hit in hits)
             {
-                // Determine center and radius from collider
-                Vector3 center = rangeCollider.bounds.center;
-                float radius = rangeCollider.bounds.extents.x; // Assumes roughly spherical/circular
-
-                Collider[] hits = Physics.OverlapSphere(center, radius, playerLayer);
-
-                foreach (Collider hit in hits)
-                {
-                    PlayerHealth playerHealth = hit.GetComponent<PlayerHealth>();
-                    if (playerHealth != null)
-                    {
-                        playerHealth.TakeDamage(damage);
-                    }
-                }
+                playerhealth.TakeDamage(damage);
             }
 
-            yield return new WaitForSeconds(0.5f); // Damage every 1 second
-        }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (rangeCollider != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(rangeCollider.bounds.center, rangeCollider.bounds.extents.x);
+            yield return new WaitForSeconds(0.5f);
         }
     }
 }

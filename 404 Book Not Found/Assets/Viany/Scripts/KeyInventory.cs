@@ -10,11 +10,6 @@ public class KeyInventory : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
@@ -26,7 +21,10 @@ public class KeyInventory : MonoBehaviour
 
     public void AddKey(string id)
     {
-        if (string.IsNullOrEmpty(id)) return;
+        if (string.IsNullOrEmpty(id))
+        {
+            return;
+        }
         if (keys.Add(id))
         {
             OnKeyCollected?.Invoke(id);
