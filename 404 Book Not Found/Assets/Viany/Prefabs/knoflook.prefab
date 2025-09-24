@@ -280,8 +280,11 @@ MonoBehaviour:
   bounceForce: 1.5
   leftHalf: {fileID: 3242250802450732288}
   rightHalf: {fileID: 8189281359653111309}
+  playerHealth: {fileID: 0}
   player: {fileID: 0}
   rb: {fileID: 3378876382635972387}
+  rbLeft: {fileID: 1667319530190393565}
+  rbRight: {fileID: 531871337702680189}
   mainCollider: {fileID: 2559223410375168356}
   enemyRenderer: {fileID: 3553147505715209100}
 --- !u!54 &3378876382635972387

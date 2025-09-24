@@ -21,12 +21,15 @@ public class EnemyAI : MonoBehaviour
     public PlayerHealth playerHealth;
 
     [SerializeField] private Transform player;
-    private float nextAttackTime;
-    private int currentHealth;
     [SerializeField] private Rigidbody rb;
-    private bool isDead;
+    [SerializeField] private Rigidbody rbLeft;
+    [SerializeField] private Rigidbody rbRight;
     [SerializeField] private Collider mainCollider;
     [SerializeField] private Renderer enemyRenderer;
+
+    private float nextAttackTime;
+    private int currentHealth;
+    private bool isDead;
     private bool leftBounced;
     private bool rightBounced;
 
@@ -82,10 +85,7 @@ public class EnemyAI : MonoBehaviour
 
     private void AttackPlayer()
     {
-        if (playerHealth != null)
-        {
-            playerHealth.TakeDamage(1);
-        }
+        playerHealth.TakeDamage(attackDamage);
     }
 
     public void TakeDamage(int amount)
@@ -94,7 +94,9 @@ public class EnemyAI : MonoBehaviour
         {
             return;
         }
+
         currentHealth -= amount;
+
         if (currentHealth <= 0)
         {
             Die();
@@ -108,24 +110,14 @@ public class EnemyAI : MonoBehaviour
         mainCollider.enabled = false;
 
         leftHalf.SetActive(true);
-        Rigidbody rbLeft = leftHalf.GetComponent<Rigidbody>();
-        if (rbLeft != null)
-        {
-            rbLeft.isKinematic = false;
-            rbLeft.linearVelocity = (Vector3.left + Vector3.up) * splitForce;
-            rbLeft.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
-        }
-
         rightHalf.SetActive(true);
-        Rigidbody rbRight = rightHalf.GetComponent<Rigidbody>();
-        if (rbRight != null)
-        {
-            rbRight.isKinematic = false;
-            rbRight.linearVelocity = (Vector3.right + Vector3.up) * splitForce;
-            rbRight.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
-        }
 
-        rb.useGravity = false;
+        rbLeft.linearVelocity = (Vector3.left + Vector3.up) * splitForce;
+        rbLeft.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
+
+        rbRight.linearVelocity = (Vector3.right + Vector3.up) * splitForce;
+        rbRight.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
+
         StartCoroutine(MonitorFallAndDestroy());
     }
 
@@ -141,17 +133,13 @@ public class EnemyAI : MonoBehaviour
         {
             if (!leftBounced)
             {
-                Rigidbody rbLeft = leftHalf.GetComponent<Rigidbody>();
-                if (rbLeft != null)
-                    rbLeft.linearVelocity = new Vector3(rbLeft.linearVelocity.x, bounceForce, rbLeft.linearVelocity.z);
+                rbLeft.linearVelocity = new Vector3(rbLeft.linearVelocity.x, bounceForce, rbLeft.linearVelocity.z);
                 leftBounced = true;
             }
 
             if (!rightBounced)
             {
-                Rigidbody rbRight = rightHalf.GetComponent<Rigidbody>();
-                if (rbRight != null)
-                    rbRight.linearVelocity = new Vector3(rbRight.linearVelocity.x, bounceForce, rbRight.linearVelocity.z);
+                rbRight.linearVelocity = new Vector3(rbRight.linearVelocity.x, bounceForce, rbRight.linearVelocity.z);
                 rightBounced = true;
             }
         }

@@ -17,7 +17,7 @@ public class KeyPickup : MonoBehaviour
 
     private void Update()
     {
-        if (!pickupOnEnter && currentKeyInRange != null && interactAction != null && interactAction.WasPerformedThisFrame())
+        if (!pickupOnEnter && currentKeyInRange && interactAction != null && interactAction.WasPerformedThisFrame())
         {
             Pickup(currentKeyInRange);
         }

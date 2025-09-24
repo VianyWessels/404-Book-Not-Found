@@ -16,12 +16,12 @@ public class PickupUI : MonoBehaviour
 
     private void Update()
     {
-        if (keyPickup.currentKeyInRange != null)
+        if (keyPickup.currentKeyInRange)
         {
             uiPanel.SetActive(true);
             uiText.text = "Press E to pick up Key";
         }
-        else if (bookPickup.currentBookInRange != null)
+        else if (bookPickup.currentBookInRange)
         {
             uiPanel.SetActive(true);
             uiText.text = "Press E to pick up Book";
