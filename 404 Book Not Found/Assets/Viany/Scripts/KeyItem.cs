@@ -2,6 +2,6 @@ using UnityEngine;
 
 public class KeyItem : MonoBehaviour
 {
-    public string keyID = "Key";
+    public string keyID;
     public Sprite keySprite;
 }
