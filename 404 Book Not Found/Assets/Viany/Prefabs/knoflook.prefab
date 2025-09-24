@@ -68,7 +68,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: dcbeb1e5db75b4d40a455a058ce08a6c, type: 2}
+  - {fileID: 2100000, guid: e50e2254eb64a2b418eeb4f0e56c45dd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -170,7 +170,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6.06, y: 2.73, z: 1.59516}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1285430056730893879}
@@ -210,7 +210,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: dcbeb1e5db75b4d40a455a058ce08a6c, type: 2}
+  - {fileID: 2100000, guid: e50e2254eb64a2b418eeb4f0e56c45dd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -268,7 +268,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
   moveSpeed: 1.5
   attackRange: 1
-  attackDamage: 10
+  attackDamage: 1
   attackCooldown: 2
   bobAmplitude: 0.5
   bobFrequency: 2
@@ -382,7 +382,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: dcbeb1e5db75b4d40a455a058ce08a6c, type: 2}
+  - {fileID: 2100000, guid: e50e2254eb64a2b418eeb4f0e56c45dd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
