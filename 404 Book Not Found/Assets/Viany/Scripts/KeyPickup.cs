@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(SphereCollider))]
 public class KeyPickup : MonoBehaviour
 {
     public KeyItem currentKeyInRange;
@@ -9,10 +10,17 @@ public class KeyPickup : MonoBehaviour
 
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private InputAction interactAction;
+    [SerializeField] private float pickupRange = 3f;
+
+    private SphereCollider trigger;
 
     private void Awake()
     {
         interactAction = playerInput.actions["Interact"];
+
+        trigger = GetComponent<SphereCollider>();
+        trigger.isTrigger = true;
+        trigger.radius = pickupRange;
     }
 
     private void Update()
@@ -39,17 +47,6 @@ public class KeyPickup : MonoBehaviour
     }
 
     private void OnTriggerExit(Collider other)
-    {
-        var key = other.GetComponent<KeyItem>();
-        if (key != null && key == currentKeyInRange) currentKeyInRange = null;
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        CheckKeyCollision(other.GetComponent<KeyItem>());
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
     {
         var key = other.GetComponent<KeyItem>();
         if (key != null && key == currentKeyInRange) currentKeyInRange = null;
