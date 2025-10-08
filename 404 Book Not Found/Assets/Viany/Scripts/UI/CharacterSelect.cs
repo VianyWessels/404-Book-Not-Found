@@ -1,71 +1,120 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
+using TMPro;
 
 public class CharacterSelect : MonoBehaviour
 {
     [SerializeField] private GameObject[] characterPrefabs;
+    [SerializeField] private string[] characterNames;
     [SerializeField] private Transform characterSpawnPoint;
     [SerializeField] private Button leftArrow;
     [SerializeField] private Button rightArrow;
     [SerializeField] private Button confirmButton;
-    [SerializeField] private UIController uiController;
+    [SerializeField] private TMP_Text characterNameText;
+    [SerializeField] private TMP_Text mainMenuCharacterNameText;
+    [SerializeField] private Canvas characterSelectCanvas;
     [SerializeField] private float rotationSpeed = 20f;
+    [SerializeField] private float slideDuration = 0.5f;
+    [SerializeField] private float slideDistance = 3f;
 
-    private GameObject currentCharacter;
+    private GameObject[] characters;
     private int currentIndex;
     private float currentYRotation;
+    private bool isSliding;
 
     void Start()
     {
-        currentIndex = PlayerPrefs.GetInt("SelectedCharacter", 0);
-        SpawnCharacter();
+        characters = new GameObject[characterPrefabs.Length];
+        for (int i = 0; i < characterPrefabs.Length; i++)
+        {
+            characters[i] = Instantiate(characterPrefabs[i], characterSpawnPoint.position, Quaternion.Euler(0f, 180f, 0f));
+            characters[i].SetActive(false);
+        }
 
-        leftArrow.onClick.AddListener(PrevCharacter);
-        rightArrow.onClick.AddListener(NextCharacter);
+        currentIndex = PlayerPrefs.GetInt("SelectedCharacter", 0);
+        characters[currentIndex].SetActive(true);
+        currentYRotation = 180f;
+        UpdateCharacterName();
+
+        UpdateMainMenuCharacterName();
+
+        leftArrow.onClick.AddListener(() => ChangeCharacter(-1));
+        rightArrow.onClick.AddListener(() => ChangeCharacter(1));
         confirmButton.onClick.AddListener(ConfirmSelection);
     }
 
     void Update()
     {
-        currentYRotation += rotationSpeed * Time.unscaledDeltaTime;
-        currentCharacter.transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+        if (characters[currentIndex].activeSelf && characterSelectCanvas != null && characterSelectCanvas.enabled && !isSliding)
+        {
+            currentYRotation += rotationSpeed * Time.unscaledDeltaTime;
+            characters[currentIndex].transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+        }
     }
 
-    void PrevCharacter()
+    private void ChangeCharacter(int direction)
     {
-        currentIndex--;
-        if (currentIndex < 0)
-        {
-            currentIndex = characterPrefabs.Length - 1;
-        }
-        SpawnCharacter();
+        if (isSliding) return;
+
+        int newIndex = currentIndex + direction;
+        if (newIndex < 0) newIndex = characters.Length - 1;
+        if (newIndex >= characters.Length) newIndex = 0;
+
+        StartCoroutine(SlideToCharacter(newIndex, direction));
     }
 
-    void NextCharacter()
+    private IEnumerator SlideToCharacter(int newIndex, int direction)
     {
-        currentIndex++;
-        if (currentIndex >= characterPrefabs.Length)
-        {
-            currentIndex = 0;
-        }
-        SpawnCharacter();
-    }
+        isSliding = true;
 
-    void SpawnCharacter()
-    {
-        if (currentCharacter != null)
+        GameObject oldCharacter = characters[currentIndex];
+        GameObject newCharacter = characters[newIndex];
+
+        newCharacter.transform.position = characterSpawnPoint.position + Vector3.right * direction * slideDistance;
+        newCharacter.SetActive(true);
+
+        float startTime = Time.unscaledTime;
+        Vector3 startOld = oldCharacter.transform.position;
+        Vector3 endOld = oldCharacter.transform.position - Vector3.right * direction * slideDistance;
+        Vector3 startNew = newCharacter.transform.position;
+        Vector3 endNew = characterSpawnPoint.position;
+
+        while (Time.unscaledTime - startTime < slideDuration)
         {
-            Destroy(currentCharacter);
+            float t = (Time.unscaledTime - startTime) / slideDuration;
+            oldCharacter.transform.position = Vector3.Lerp(startOld, endOld, t);
+            newCharacter.transform.position = Vector3.Lerp(startNew, endNew, t);
+            yield return null;
         }
 
-        currentCharacter = Instantiate(characterPrefabs[currentIndex], characterSpawnPoint.position, Quaternion.identity);
-        currentCharacter.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+        oldCharacter.SetActive(false);
+        currentIndex = newIndex;
         currentYRotation = 180f;
+        UpdateCharacterName();
+        isSliding = false;
     }
 
-    void ConfirmSelection()
+    private void UpdateCharacterName()
+    {
+        if (characterNameText != null && characterNames.Length > currentIndex)
+        {
+            characterNameText.text = characterNames[currentIndex];
+        }
+    }
+
+    private void UpdateMainMenuCharacterName()
+    {
+        if (mainMenuCharacterNameText != null && characterNames.Length > currentIndex)
+        {
+            mainMenuCharacterNameText.text = characterNames[currentIndex];
+        }
+    }
+
+    private void ConfirmSelection()
     {
         PlayerPrefs.SetInt("SelectedCharacter", currentIndex);
         PlayerPrefs.Save();
+        UpdateMainMenuCharacterName();
     }
 }
