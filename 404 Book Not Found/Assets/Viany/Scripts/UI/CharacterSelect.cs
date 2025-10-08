@@ -7,12 +7,16 @@ public class CharacterSelect : MonoBehaviour
 {
     [SerializeField] private GameObject[] characterPrefabs;
     [SerializeField] private string[] characterNames;
+    [SerializeField] private string[] characterDescriptions;
+    [SerializeField] private Sprite[] characterImages;
     [SerializeField] private Transform characterSpawnPoint;
     [SerializeField] private Button leftArrow;
     [SerializeField] private Button rightArrow;
     [SerializeField] private Button confirmButton;
     [SerializeField] private TMP_Text characterNameText;
     [SerializeField] private TMP_Text mainMenuCharacterNameText;
+    [SerializeField] private TMP_Text characterDescription;
+    [SerializeField] private Image characterIcon;
     [SerializeField] private Canvas characterSelectCanvas;
     [SerializeField] private float rotationSpeed = 20f;
     [SerializeField] private float slideDuration = 0.5f;
@@ -35,8 +39,8 @@ public class CharacterSelect : MonoBehaviour
         currentIndex = PlayerPrefs.GetInt("SelectedCharacter", 0);
         characters[currentIndex].SetActive(true);
         currentYRotation = 180f;
-        UpdateCharacterName();
 
+        UpdateCharacterUI();
         UpdateMainMenuCharacterName();
 
         leftArrow.onClick.AddListener(() => ChangeCharacter(-1));
@@ -91,21 +95,26 @@ public class CharacterSelect : MonoBehaviour
         oldCharacter.SetActive(false);
         currentIndex = newIndex;
         currentYRotation = 180f;
-        UpdateCharacterName();
+
+        UpdateCharacterUI();
         isSliding = false;
     }
 
-    private void UpdateCharacterName()
+    private void UpdateCharacterUI()
     {
-        if (characterNameText != null && characterNames.Length > currentIndex)
+        if (characterNames.Length > currentIndex)
         {
             characterNameText.text = characterNames[currentIndex];
+            characterDescription.text = characterDescriptions[currentIndex];
+
+            if (characterImages.Length > currentIndex && characterIcon != null)
+                characterIcon.sprite = characterImages[currentIndex];
         }
     }
 
     private void UpdateMainMenuCharacterName()
     {
-        if (mainMenuCharacterNameText != null && characterNames.Length > currentIndex)
+        if (characterNames.Length > currentIndex)
         {
             mainMenuCharacterNameText.text = characterNames[currentIndex];
         }
