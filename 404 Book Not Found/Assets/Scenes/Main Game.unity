@@ -2412,9 +2412,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterSelect
   characterPrefabs:
-  - {fileID: 1130687645325367307, guid: 8828de030cf6beb4d8c695b2b4bc1c0d, type: 3}
-  - {fileID: 1130687645325367307, guid: 7e76be9342c0a0a4689d9fd6259600c6, type: 3}
-  - {fileID: 1130687645325367307, guid: 042a19ca951bb234cb0e1d91b61329c1, type: 3}
+  - {fileID: 5856418908366617583, guid: 8828de030cf6beb4d8c695b2b4bc1c0d, type: 3}
+  - {fileID: 953766195434599486, guid: bac7927d696cd8e4c99ce47d3555554f, type: 3}
+  - {fileID: 5598624274424625078, guid: 84be15818203a1f41bef518ba065bc79, type: 3}
   characterNames:
   - Morwen
   - Ashen
@@ -9814,7 +9814,7 @@ Transform:
   m_GameObject: {fileID: 1844801703}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -2.25}
+  m_LocalPosition: {x: 0, y: 0.85, z: -2.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10100,7 +10100,7 @@ Transform:
   m_GameObject: {fileID: 1870200229}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -200, y: 0, z: 0}
+  m_LocalPosition: {x: -200, y: -0.85, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

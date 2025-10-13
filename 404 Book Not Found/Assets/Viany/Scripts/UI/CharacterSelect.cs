@@ -24,7 +24,7 @@ public class CharacterSelect : MonoBehaviour
 
     private GameObject[] characters;
     private int currentIndex;
-    private float currentYRotation;
+    private float sharedYRotation = 180f;
     private bool isSliding;
 
     void Start()
@@ -38,7 +38,6 @@ public class CharacterSelect : MonoBehaviour
 
         currentIndex = PlayerPrefs.GetInt("SelectedCharacter", 0);
         characters[currentIndex].SetActive(true);
-        currentYRotation = 180f;
 
         UpdateCharacterUI();
         UpdateMainMenuCharacterName();
@@ -52,8 +51,17 @@ public class CharacterSelect : MonoBehaviour
     {
         if (characters[currentIndex].activeSelf && characterSelectCanvas != null && characterSelectCanvas.enabled && !isSliding)
         {
-            currentYRotation += rotationSpeed * Time.unscaledDeltaTime;
-            characters[currentIndex].transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+            sharedYRotation += rotationSpeed * Time.unscaledDeltaTime;
+
+            for (int i = 0; i < characters.Length; i++)
+            {
+                if (characters[i] != null)
+                    characters[i].transform.rotation = Quaternion.Euler(0f, sharedYRotation, 0f);
+            }
+        }
+        else if (characterSelectCanvas != null && !characterSelectCanvas.enabled)
+        {
+            ResetCharacterRotations();
         }
     }
 
@@ -94,7 +102,6 @@ public class CharacterSelect : MonoBehaviour
 
         oldCharacter.SetActive(false);
         currentIndex = newIndex;
-        currentYRotation = 180f;
 
         UpdateCharacterUI();
         isSliding = false;
@@ -125,5 +132,16 @@ public class CharacterSelect : MonoBehaviour
         PlayerPrefs.SetInt("SelectedCharacter", currentIndex);
         PlayerPrefs.Save();
         UpdateMainMenuCharacterName();
+    }
+
+    private void ResetCharacterRotations()
+    {
+        sharedYRotation = 180f;
+
+        for (int i = 0; i < characters.Length; i++)
+        {
+            if (characters[i] != null)
+                characters[i].transform.rotation = Quaternion.Euler(0f, sharedYRotation, 0f);
+        }
     }
 }
