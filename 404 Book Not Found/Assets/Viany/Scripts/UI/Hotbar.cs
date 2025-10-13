@@ -10,11 +10,6 @@ public class Hotbar : MonoBehaviour
 
     private string currentKeyID;
 
-    void Start()
-    {
-        hotbarCanvas.enabled = false;
-    }
-
     public void SetKey(KeyItem key)
     {
         currentKeyID = key.keyID;
@@ -22,8 +17,6 @@ public class Hotbar : MonoBehaviour
         label.text = currentKeyID;
         icon.sprite = key.keySprite;
         icon.enabled = true;
-
-        hotbarCanvas.enabled = true;
     }
 
     public string GetCurrentKey()
@@ -36,7 +29,5 @@ public class Hotbar : MonoBehaviour
         currentKeyID = null;
         label.text = "";
         icon.enabled = false;
-
-        hotbarCanvas.enabled = false;
     }
 }

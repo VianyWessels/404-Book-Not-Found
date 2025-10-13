@@ -10,6 +10,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private Canvas characterSelect;
     [SerializeField] private Canvas levelSelect;
     [SerializeField] private Canvas pauzeMenu;
+    [SerializeField] private Canvas inGameCanvas;
 
     [SerializeField] private AudioMixer audioMixer;
     [SerializeField] private Slider musicSlider;
@@ -29,6 +30,7 @@ public class UIController : MonoBehaviour
     void Start()
     {
         mainMenu.enabled = true;
+        inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         settings.enabled = false;
         characterSelect.enabled = false;
@@ -82,6 +84,7 @@ public class UIController : MonoBehaviour
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
 
+        inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         characterChosen = false;
         mainMenu.enabled = true;
@@ -116,6 +119,7 @@ public class UIController : MonoBehaviour
 
     private void ShowCharacterSelect()
     {
+        inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         characterSelect.enabled = true;
         mainMenu.enabled = false;
@@ -141,6 +145,7 @@ public class UIController : MonoBehaviour
 
     public void OpenCharacterSelect()
     {
+        inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         openedFromMainMenu = false;
         characterSelect.enabled = true;
@@ -151,6 +156,7 @@ public class UIController : MonoBehaviour
 
     private void ShowLevelSelect()
     {
+        inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         levelSelect.enabled = true;
         mainMenu.enabled = false;
@@ -184,6 +190,7 @@ public class UIController : MonoBehaviour
 
     public void StartGame()
     {
+        inGameCanvas.enabled = true;
         pauzeMenu.enabled = false;
         mainMenu.enabled = false;
         settings.enabled = false;
@@ -203,6 +210,7 @@ public class UIController : MonoBehaviour
             mainMenu.enabled = true;
         }
 
+        inGameCanvas.enabled = false;
         characterSelect.enabled = false;
         levelSelect.enabled = false;
         Time.timeScale = 0f;

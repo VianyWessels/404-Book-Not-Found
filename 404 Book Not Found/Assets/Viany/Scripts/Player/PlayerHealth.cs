@@ -7,8 +7,8 @@ public class PlayerHealth : MonoBehaviour
     private int currentHealth;
 
     public Image[] heartIcons;
-    public Sprite fullHeart;
-    public Sprite emptyHeart;
+    public Color fullHeart;
+    public Color emptyHeart;
 
     void Start()
     {
@@ -32,7 +32,7 @@ public class PlayerHealth : MonoBehaviour
     {
         for (int i = 0; i < heartIcons.Length; i++)
         {
-            heartIcons[i].sprite = (i < currentHealth) ? fullHeart : emptyHeart;
+            heartIcons[i].color = (i < currentHealth) ? fullHeart : emptyHeart;
         }
     }
 
