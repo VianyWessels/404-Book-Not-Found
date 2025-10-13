@@ -10,17 +10,11 @@ public class KeyPickup : MonoBehaviour
 
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private InputAction interactAction;
-    [SerializeField] private float pickupRange = 3f;
-
-    private SphereCollider trigger;
+    [SerializeField] private float pickupRange;
 
     private void Awake()
     {
         interactAction = playerInput.actions["Interact"];
-
-        trigger = GetComponent<SphereCollider>();
-        trigger.isTrigger = true;
-        trigger.radius = pickupRange;
     }
 
     private void Update()
@@ -33,8 +27,28 @@ public class KeyPickup : MonoBehaviour
 
     private void Pickup(KeyItem key)
     {
-        KeyInventory.Instance.AddKey(key.keyID);
+        string previousKeyID = hotbar.GetCurrentKey();
+        if (!string.IsNullOrEmpty(previousKeyID))
+        {
+            KeyInventory.Instance.RemoveKey(previousKeyID);
 
+            KeyItem previousKeyPrefab = KeyDatabase.Instance.GetKeyPrefab(previousKeyID);
+            if (previousKeyPrefab != null)
+            {
+                Vector3 spawnPosition = key.transform.position;
+                Quaternion spawnRotation = key.transform.rotation;
+
+                KeyItem droppedKey = Instantiate(previousKeyPrefab, spawnPosition, spawnRotation);
+
+                if (droppedKey.TryGetComponent(out KeyPickup keyPickup))
+                {
+                    keyPickup.playerInput = playerInput;
+                    keyPickup.hotbar = hotbar;
+                }
+            }
+        }
+
+        KeyInventory.Instance.AddKey(key.keyID);
         hotbar.SetKey(key);
 
         Destroy(key.gameObject);

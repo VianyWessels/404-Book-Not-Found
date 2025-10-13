@@ -182,7 +182,6 @@ public class UIController : MonoBehaviour
 
     public void OnLevelButtonClicked(int levelIndex)
     {
-        levelSystem.UnlockNextLevel(levelIndex);
         UpdateLevelButtons();
         levelSelect.enabled = false;
         StartGame();
