@@ -7,8 +7,14 @@ public class Hotbar : MonoBehaviour
     public Image icon;
     public TextMeshProUGUI label;
     public Canvas hotbarCanvas;
+    public Sprite emptyImage;
 
     private string currentKeyID;
+
+    public void Start()
+    {
+        Clear();
+    }
 
     public void SetKey(KeyItem key)
     {
@@ -28,6 +34,6 @@ public class Hotbar : MonoBehaviour
     {
         currentKeyID = null;
         label.text = "";
-        icon.enabled = false;
+        icon.sprite = emptyImage;
     }
 }

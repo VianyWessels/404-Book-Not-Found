@@ -49,6 +49,13 @@ public class Door : MonoBehaviour
                     isOpening = true;
                     popupCanvas.enabled = false;
                     blackBackground.SetActive(true);
+
+                    KeyInventory.Instance.RemoveKey(requiredKeyID);
+
+                    Hotbar hotbar = player.GetComponentInChildren<Hotbar>();
+                    if (hotbar != null)
+                        hotbar.Clear();
+
                     StartCoroutine(OpenDoor());
                 }
             }
