@@ -131,9 +131,7 @@ public class CharacterSelect : MonoBehaviour
     {
         PlayerPrefs.SetInt("SelectedCharacter", currentIndex);
         PlayerPrefs.Save();
-        UpdateMainMenuCharacterName();
     }
-
     private void ResetCharacterRotations()
     {
         sharedYRotation = 180f;

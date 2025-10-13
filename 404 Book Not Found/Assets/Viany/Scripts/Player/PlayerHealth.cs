@@ -9,6 +9,7 @@ public class PlayerHealth : MonoBehaviour
     public Image[] heartIcons;
     public Color fullHeart;
     public Color emptyHeart;
+    public Animator animator;
 
     void Start()
     {
@@ -38,6 +39,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
+        animator.SetTrigger("Die");
         Time.timeScale = 0f;
     }
 

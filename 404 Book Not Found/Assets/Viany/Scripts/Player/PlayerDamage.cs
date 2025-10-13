@@ -13,6 +13,8 @@ public class PlayerDamage : MonoBehaviour
     private float nextAttackTime;
 
     public GameObject hitboxChild;
+    public GameObject weapon;
+    public Animator animator;
 
     void Start()
     {
@@ -20,28 +22,39 @@ public class PlayerDamage : MonoBehaviour
         {
             BoxCollider hitbox = hitboxChild.GetComponent<BoxCollider>();
             hitbox.isTrigger = true;
-
             hitboxChild.SetActive(false);
         }
+
+        if (weapon != null)
+            weapon.SetActive(false);
     }
 
     public void OnAttack(InputValue value)
     {
         if (value.isPressed && Time.time >= nextAttackTime)
         {
-            StartCoroutine(ActivateHitbox());
-            Attack();
+            animator.SetTrigger("Attack");
+            StartCoroutine(AttackSequence());
             nextAttackTime = Time.time + attackCooldown;
         }
     }
 
-    private IEnumerator ActivateHitbox()
+    private IEnumerator AttackSequence()
     {
-        if (hitboxChild == null) yield break;
+        if (weapon != null)
+            weapon.SetActive(true);
 
-        hitboxChild.SetActive(true);
+        if (hitboxChild != null)
+            hitboxChild.SetActive(true);
+
         yield return new WaitForSeconds(hitboxDuration);
-        hitboxChild.SetActive(false);
+
+        if (hitboxChild != null)
+            hitboxChild.SetActive(false);
+
+        yield return new WaitForSeconds(0.75f);
+        if (weapon != null)
+            weapon.SetActive(false);
     }
 
     private void Attack()
