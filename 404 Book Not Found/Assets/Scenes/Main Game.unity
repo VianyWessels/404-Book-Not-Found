@@ -6131,7 +6131,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 767028964}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 0
   m_Camera: {fileID: 0}
@@ -14294,7 +14294,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3836184936177163674, guid: a2a65178b2a91c94a863ea698aabb6ff, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.25
+      value: 0.264
       objectReference: {fileID: 0}
     - target: {fileID: 3836184936177163674, guid: a2a65178b2a91c94a863ea698aabb6ff, type: 3}
       propertyPath: m_LocalPosition.z
@@ -17192,7 +17192,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3836184936177163674, guid: ca96c2cc45128db44b290f135132dadb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.25929374
+      value: 0.27329373
       objectReference: {fileID: 0}
     - target: {fileID: 3836184936177163674, guid: ca96c2cc45128db44b290f135132dadb, type: 3}
       propertyPath: m_LocalPosition.z
