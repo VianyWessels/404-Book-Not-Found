@@ -7,10 +7,8 @@ public class KeyPickup : MonoBehaviour
     public KeyItem currentKeyInRange;
     public bool pickupOnEnter = false;
     public Hotbar hotbar;
-
-    [SerializeField] private PlayerInput playerInput;
-    [SerializeField] private InputAction interactAction;
-    [SerializeField] private float pickupRange;
+    public PlayerInput playerInput;
+    private InputAction interactAction;
 
     private void Awake()
     {
@@ -19,7 +17,7 @@ public class KeyPickup : MonoBehaviour
 
     private void Update()
     {
-        if (!pickupOnEnter && currentKeyInRange && interactAction != null && interactAction.WasPerformedThisFrame())
+        if (!pickupOnEnter && currentKeyInRange && interactAction.WasPerformedThisFrame())
         {
             Pickup(currentKeyInRange);
         }
@@ -31,15 +29,12 @@ public class KeyPickup : MonoBehaviour
         if (!string.IsNullOrEmpty(previousKeyID))
         {
             KeyInventory.Instance.RemoveKey(previousKeyID);
-
             KeyItem previousKeyPrefab = KeyDatabase.Instance.GetKeyPrefab(previousKeyID);
             if (previousKeyPrefab != null)
             {
                 Vector3 spawnPosition = key.transform.position;
                 Quaternion spawnRotation = key.transform.rotation;
-
                 KeyItem droppedKey = Instantiate(previousKeyPrefab, spawnPosition, spawnRotation);
-
                 if (droppedKey.TryGetComponent(out KeyPickup keyPickup))
                 {
                     keyPickup.playerInput = playerInput;
@@ -47,31 +42,28 @@ public class KeyPickup : MonoBehaviour
                 }
             }
         }
-
         KeyInventory.Instance.AddKey(key.keyID);
         hotbar.SetKey(key);
-
         Destroy(key.gameObject);
         currentKeyInRange = null;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        CheckKeyCollision(other.GetComponent<KeyItem>());
+        var key = other.GetComponent<KeyItem>();
+        if (key != null)
+        {
+            currentKeyInRange = key;
+            if (pickupOnEnter) Pickup(key);
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
         var key = other.GetComponent<KeyItem>();
-        if (key != null && key == currentKeyInRange) currentKeyInRange = null;
-    }
-
-    private void CheckKeyCollision(KeyItem key)
-    {
-        if (key != null)
+        if (key != null && key == currentKeyInRange)
         {
-            currentKeyInRange = key;
-            if (pickupOnEnter) Pickup(key);
+            currentKeyInRange = null;
         }
     }
 }

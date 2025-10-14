@@ -17,6 +17,7 @@ public class Door : MonoBehaviour
     public string unlockText = "Press E to open door";
     public Transform player;
     public PlayerInput playerInput;
+    public Collider doorCollider;
 
     private InputAction interactAction;
     private bool isPlayerInRange;
@@ -49,13 +50,8 @@ public class Door : MonoBehaviour
                     isOpening = true;
                     popupCanvas.enabled = false;
                     blackBackground.SetActive(true);
-
                     KeyInventory.Instance.RemoveKey(requiredKeyID);
-
-                    Hotbar hotbar = player.GetComponentInChildren<Hotbar>();
-                    if (hotbar != null)
-                        hotbar.Clear();
-
+                    player.GetComponentInChildren<Hotbar>()?.Clear();
                     StartCoroutine(OpenDoor());
                 }
             }
@@ -72,6 +68,7 @@ public class Door : MonoBehaviour
 
     private IEnumerator OpenDoor()
     {
+        doorCollider.enabled = false;
         float t = 0f;
         while (t < 1f)
         {
@@ -79,6 +76,7 @@ public class Door : MonoBehaviour
             doorPart.rotation = Quaternion.Slerp(closedRotation, targetRotation, t);
             yield return null;
         }
+        doorCollider.enabled = true;
         isOpening = false;
         isOpen = true;
     }
@@ -87,7 +85,6 @@ public class Door : MonoBehaviour
     {
         if (other.transform == player)
             isPlayerInRange = true;
-
         if (other.transform == player && isOpen && !playerPassedThrough)
         {
             playerPassedThrough = true;

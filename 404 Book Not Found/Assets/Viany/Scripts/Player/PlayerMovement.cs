@@ -28,10 +28,10 @@ public class PlayerMovement : MonoBehaviour
         moveDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
         rb.AddForce(moveDirection * moveSpeed);
 
-        bool isWalking = moveDirection.magnitude > 0.1f;
+        bool isWalking = rb.linearVelocity.magnitude > 0.1f;
         animator.SetBool("isWalking", isWalking);
 
-        if (isWalking)
+        if (isWalking && moveDirection.sqrMagnitude > 0.01f)
         {
             Vector3 targetDirection = new Vector3(moveDirection.x, 0f, moveDirection.z);
             Quaternion targetRotation = Quaternion.LookRotation(targetDirection);

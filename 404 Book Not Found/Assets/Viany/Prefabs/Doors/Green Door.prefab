@@ -180,8 +180,8 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1c2b014fc06aee2409344dde7d45ef99, type: 2}
+  m_sharedMaterial: {fileID: -8259193532051713871, guid: 1c2b014fc06aee2409344dde7d45ef99, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -262,7 +262,7 @@ GameObject:
   - component: {fileID: 7398863722948347331}
   - component: {fileID: 8454889686287747193}
   m_Layer: 0
-  m_Name: Black Part
+  m_Name: White Part
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -316,7 +316,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 695cf78716d38fe448707ec7685a2b73, type: 2}
+  - {fileID: 2100000, guid: 36506fd2bcee7dc42a9a0cf3d27b51d1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -635,6 +635,7 @@ MonoBehaviour:
   unlockText: Press E to open door
   player: {fileID: 0}
   playerInput: {fileID: 0}
+  doorCollider: {fileID: 4247757976305994797}
 --- !u!65 &2033291939619342119
 BoxCollider:
   m_ObjectHideFlags: 0
