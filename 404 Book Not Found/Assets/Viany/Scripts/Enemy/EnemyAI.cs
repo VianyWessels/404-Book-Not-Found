@@ -18,26 +18,31 @@ public class EnemyAI : MonoBehaviour
     public float bounceForce;
     public GameObject leftHalf;
     public GameObject rightHalf;
+    public GameObject splitHalo;
     public PlayerHealth playerHealth;
 
     [SerializeField] private Transform player;
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Rigidbody rbLeft;
     [SerializeField] private Rigidbody rbRight;
+    [SerializeField] private Rigidbody rbSplitHalo;
     [SerializeField] private Collider mainCollider;
     [SerializeField] private Renderer enemyRenderer;
+    [SerializeField] private Renderer haloRenderer;
 
     private float nextAttackTime;
     private int currentHealth;
     private bool isDead;
     private bool leftBounced;
     private bool rightBounced;
+    private bool haloBounced;
 
     void Start()
     {
         currentHealth = maxHealth;
         leftHalf.SetActive(false);
         rightHalf.SetActive(false);
+        splitHalo.SetActive(false);
     }
 
     void Update()
@@ -107,16 +112,21 @@ public class EnemyAI : MonoBehaviour
     {
         isDead = true;
         enemyRenderer.enabled = false;
+        haloRenderer.enabled = false;
         mainCollider.enabled = false;
 
         leftHalf.SetActive(true);
         rightHalf.SetActive(true);
+        splitHalo.SetActive(true);
 
         rbLeft.linearVelocity = (Vector3.left + Vector3.up) * splitForce;
         rbLeft.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
 
         rbRight.linearVelocity = (Vector3.right + Vector3.up) * splitForce;
         rbRight.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
+
+        rbSplitHalo.linearVelocity = (Vector3.right + Vector3.up) * splitForce;
+        rbSplitHalo.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
 
         StartCoroutine(MonitorFallAndDestroy());
     }
@@ -141,6 +151,12 @@ public class EnemyAI : MonoBehaviour
             {
                 rbRight.linearVelocity = new Vector3(rbRight.linearVelocity.x, bounceForce, rbRight.linearVelocity.z);
                 rightBounced = true;
+            }
+
+            if (!haloBounced)
+            {
+                rbSplitHalo.linearVelocity = new Vector3(rbSplitHalo.linearVelocity.x, bounceForce, rbSplitHalo.linearVelocity.z);
+                haloBounced = true;
             }
         }
     }
