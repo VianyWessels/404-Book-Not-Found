@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2282671962320622192}
   - component: {fileID: 6671213723605920823}
   - component: {fileID: 5373613356794674448}
+  - component: {fileID: 6917074541808007063}
   m_Layer: 0
   m_Name: Morwen
   m_TagString: Untagged
@@ -94,3 +95,15 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6917074541808007063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5856418908366617583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e647fed4da031d7479c919906f917f0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoveSmoothness

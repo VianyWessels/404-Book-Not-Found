@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 506167235838897856}
   - component: {fileID: 2324771613525310518}
   - component: {fileID: 7531756214622095170}
+  - component: {fileID: 6792302677127977892}
   m_Layer: 0
   m_Name: Main book
   m_TagString: Untagged
@@ -127,3 +128,15 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.21407136, y: 0.036802612, z: 0.25000036}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6792302677127977892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1886962510650042570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e647fed4da031d7479c919906f917f0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RemoveSmoothness
