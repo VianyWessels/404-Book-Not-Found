@@ -40,7 +40,6 @@ public class PlayerHealth : MonoBehaviour
     private void Die()
     {
         animator.SetTrigger("Die");
-        Time.timeScale = 0f;
     }
 
     public int GetCurrentHealth() => currentHealth;
