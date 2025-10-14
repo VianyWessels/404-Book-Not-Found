@@ -29,18 +29,21 @@ public class UIController : MonoBehaviour
 
     void Start()
     {
+        TimeScale(0);
+
         mainMenu.enabled = true;
         inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         settings.enabled = false;
         characterSelect.enabled = false;
         levelSelect.enabled = false;
-        Time.timeScale = 0f;
 
         characterChosen = PlayerPrefs.GetInt("CharacterChosen", 0) == 1;
 
         if (characterSelectedPanel != null)
+        {
             characterSelectedPanel.SetActive(true);
+        }
 
         float musicValue = PlayerPrefs.GetFloat("MusicVolume", 0.75f);
         float sfxValue = PlayerPrefs.GetFloat("SFXVolume", 0.75f);
@@ -91,19 +94,24 @@ public class UIController : MonoBehaviour
         settings.enabled = false;
         characterSelect.enabled = false;
         levelSelect.enabled = false;
-        Time.timeScale = 0f;
 
         if (characterSelectedPanel != null)
+        {
             characterSelectedPanel.SetActive(false);
+        }
 
         if (levelSystem != null)
+        {
             levelSystem.ResetLevels();
+        }
 
         UpdateLevelButtons();
     }
 
     public void OnStartButton()
     {
+        TimeScale(0);
+
         mainMenu.enabled = false;
 
         if (!characterChosen)
@@ -119,6 +127,8 @@ public class UIController : MonoBehaviour
 
     private void ShowCharacterSelect()
     {
+        TimeScale(0);
+
         inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         characterSelect.enabled = true;
@@ -135,16 +145,24 @@ public class UIController : MonoBehaviour
         characterSelect.enabled = false;
 
         if (characterSelectedPanel != null)
+        {
             characterSelectedPanel.SetActive(true);
+        }
 
         if (openedFromMainMenu)
+        {
             ShowLevelSelect();
+        }
         else
+        {
             GoToMainMenu();
+        }
     }
 
     public void OpenCharacterSelect()
     {
+        TimeScale(0);
+
         inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         openedFromMainMenu = false;
@@ -156,6 +174,8 @@ public class UIController : MonoBehaviour
 
     private void ShowLevelSelect()
     {
+        TimeScale(0);
+
         inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         levelSelect.enabled = true;
@@ -189,19 +209,23 @@ public class UIController : MonoBehaviour
 
     public void StartGame()
     {
+        TimeScale(1);
+
         inGameCanvas.enabled = true;
         pauzeMenu.enabled = false;
         mainMenu.enabled = false;
         settings.enabled = false;
-        Time.timeScale = 1f;
     }
 
     public void GoToMainMenu()
     {
+        TimeScale(0);
+
         settings.enabled = false;
 
         if (openedFromPause)
         {
+            TimeScale(0);
             pauzeMenu.enabled = true;
         }
         else
@@ -212,7 +236,6 @@ public class UIController : MonoBehaviour
         inGameCanvas.enabled = false;
         characterSelect.enabled = false;
         levelSelect.enabled = false;
-        Time.timeScale = 0f;
     }
 
     public void QuitGame()
@@ -240,6 +263,8 @@ public class UIController : MonoBehaviour
 
     public void OpenSettingsFromPause()
     {
+        TimeScale(0);
+
         openedFromPause = true;
         pauzeMenu.enabled = false;
         settings.enabled = true;
@@ -247,6 +272,8 @@ public class UIController : MonoBehaviour
 
     public void OpenSettingsFromMainMenu()
     {
+        TimeScale(0);
+
         openedFromPause = false;
         mainMenu.enabled = false;
         settings.enabled = true;
@@ -258,32 +285,36 @@ public class UIController : MonoBehaviour
         {
             if (settings.enabled)
             {
+                TimeScale(0);
                 GoToMainMenu();
             }
             else if (AllMenusOff())
             {
-                pauzeMenu.enabled = !pauzeMenu.enabled;
+                TimeScale(0);
+                pauzeMenu.enabled = true;
             }
         }
     }
 
     private bool AllMenusOff()
     {
-        return !mainMenu.enabled &&
-               !settings.enabled &&
-               !characterSelect.enabled &&
-               !levelSelect.enabled;
+        return !mainMenu.enabled && !settings.enabled && !characterSelect.enabled && !levelSelect.enabled;
     }
 
     public void GoToMainMenuFromPause()
     {
+        TimeScale(0);
+
         pauzeMenu.enabled = false;
         settings.enabled = false;
         characterSelect.enabled = false;
         levelSelect.enabled = false;
         mainMenu.enabled = true;
-        Time.timeScale = 0f;
         openedFromPause = false;
     }
 
+    public void TimeScale(int scale)
+    {
+        Time.timeScale = scale;
+    }
 }
