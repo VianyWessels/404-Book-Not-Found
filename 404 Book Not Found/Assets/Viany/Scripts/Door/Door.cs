@@ -107,6 +107,5 @@ public class Door : MonoBehaviour
         player.position = teleportTarget.position;
         if (cameraTarget != null)
             Camera.main.transform.position = cameraTarget.position;
-        yield return new WaitForSeconds(0.2f);
     }
 }
