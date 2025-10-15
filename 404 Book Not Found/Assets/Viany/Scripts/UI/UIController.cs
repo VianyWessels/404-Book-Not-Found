@@ -370,5 +370,4 @@ public class UIController : MonoBehaviour
             GoToMainMenu();
         }
     }
-
 }
