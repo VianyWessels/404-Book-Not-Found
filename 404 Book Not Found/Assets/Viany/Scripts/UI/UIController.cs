@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class UIController : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private Canvas levelSelect;
     [SerializeField] private Canvas pauzeMenu;
     [SerializeField] private Canvas inGameCanvas;
+    [SerializeField] private Canvas winScreen;
 
     [SerializeField] private AudioMixer audioMixer;
     [SerializeField] private Slider musicSlider;
@@ -202,6 +204,7 @@ public class UIController : MonoBehaviour
 
     public void OnLevelButtonClicked(int levelIndex)
     {
+        levelSystem.LoadLevel(levelIndex);
         UpdateLevelButtons();
         levelSelect.enabled = false;
         StartGame();
@@ -220,6 +223,7 @@ public class UIController : MonoBehaviour
     public void GoToMainMenu()
     {
         TimeScale(0);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
         settings.enabled = false;
 
@@ -304,6 +308,7 @@ public class UIController : MonoBehaviour
     public void GoToMainMenuFromPause()
     {
         TimeScale(0);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
         pauzeMenu.enabled = false;
         settings.enabled = false;
@@ -317,4 +322,53 @@ public class UIController : MonoBehaviour
     {
         Time.timeScale = scale;
     }
+
+    public void RedoLevel()
+    {
+        Time.timeScale = 1f;
+        var currentLevel = FindFirstObjectByType<LevelSystem>().GetCurrentLevel();
+        PlayerPrefs.SetInt("CurrentLevel", currentLevel);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void ShowWinScreen()
+    {
+        TimeScale(0);
+
+        inGameCanvas.enabled = false;
+        pauzeMenu.enabled = false;
+        winScreen.enabled = true;
+    }
+
+    public void OnWinMainMenuButton()
+    {
+        int currentLevel = levelSystem.GetCurrentLevel();
+        levelSystem.UnlockNextLevel(currentLevel);
+        winScreen.enabled = false;
+
+        GoToMainMenu();
+    }
+
+    public void OnWinNextLevelButton()
+    {
+        if (levelSystem == null) return;
+
+        int currentLevel = levelSystem.GetCurrentLevel();
+        int nextLevel = currentLevel + 1;
+
+        levelSystem.UnlockNextLevel(currentLevel);
+
+        winScreen.enabled = false;
+
+        if (nextLevel <= levelSystem.GetTotalLevels())
+        {
+            levelSystem.LoadLevel(nextLevel);
+            StartGame();
+        }
+        else
+        {
+            GoToMainMenu();
+        }
+    }
+
 }

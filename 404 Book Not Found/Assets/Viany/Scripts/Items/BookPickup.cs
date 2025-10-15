@@ -6,6 +6,7 @@ public class BookPickup : MonoBehaviour
     public BookItem currentBookInRange;
     public bool pickupOnEnter;
 
+    [SerializeField] private UIController uiController;
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private InputAction interactAction;
 
@@ -24,15 +25,12 @@ public class BookPickup : MonoBehaviour
 
     private void Pickup(BookItem book)
     {
-        if (book == null)
-        {
-            return;
-        }
+        if (book == null) return;
 
         Destroy(book.gameObject);
         currentBookInRange = null;
 
-        Win();
+        uiController?.ShowWinScreen();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -42,10 +40,7 @@ public class BookPickup : MonoBehaviour
         {
             currentBookInRange = book;
             if (pickupOnEnter)
-            {
                 Pickup(book);
-            }
-
         }
     }
 
@@ -53,33 +48,6 @@ public class BookPickup : MonoBehaviour
     {
         var book = other.GetComponent<BookItem>();
         if (book != null && book == currentBookInRange)
-        {
             currentBookInRange = null;
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        var book = other.GetComponent<BookItem>();
-        if (book != null)
-        {
-            currentBookInRange = book;
-            if (pickupOnEnter) Pickup(book);
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        var book = other.GetComponent<BookItem>();
-        if (book != null && book == currentBookInRange)
-        {
-            currentBookInRange = null;
-        }
-    }
-
-    private void Win()
-    {
-        Time.timeScale = 0f;
-        // add win functions
     }
 }

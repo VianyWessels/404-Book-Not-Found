@@ -11,14 +11,24 @@ public class PlayerHealth : MonoBehaviour
     public Color emptyHeart;
     public Animator animator;
 
+    public Canvas deathScreen;
+    public PlayerMovement playerMovement;
+    public PlayerDamage playerDamage;
+
+    private bool isDead;
+
     void Start()
     {
         currentHealth = maxHealth;
         UpdateHearts();
+        if (deathScreen != null)
+            deathScreen.enabled = false;
     }
 
     public void TakeDamage(int amount)
     {
+        if (isDead) return;
+
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         UpdateHearts();
@@ -39,7 +49,28 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
+        if (isDead) return;
+        isDead = true;
+
         animator.SetTrigger("Die");
+
+        if (playerMovement != null)
+            playerMovement.enabled = false;
+
+        if (playerDamage != null)
+            playerDamage.enabled = false;
+
+        StartCoroutine(ShowDeathScreenAfterDelay(1.5f));
+    }
+
+    private System.Collections.IEnumerator ShowDeathScreenAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (deathScreen != null)
+            deathScreen.enabled = true;
+
+        Time.timeScale = 0f;
     }
 
     public int GetCurrentHealth() => currentHealth;
