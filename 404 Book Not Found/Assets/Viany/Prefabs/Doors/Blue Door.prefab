@@ -359,8 +359,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.887731, y: 3.2366304, z: 0.17429861}
-  m_Center: {x: -0.8972101, y: 1.6183152, z: -0.0070495605}
+  m_Size: {x: 1.4740247, y: 2.5273056, z: 0.22}
+  m_Center: {x: -0.70058185, y: 1.2636528, z: -0.007415369}
 --- !u!1 &6306611813195334027
 GameObject:
   m_ObjectHideFlags: 0
@@ -609,7 +609,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7890801977203331783}
   - component: {fileID: 1656300465322091982}
-  - component: {fileID: 1126049139765906720}
+  - component: {fileID: 6269069646442342558}
   m_Layer: 0
   m_Name: Blue Door
   m_TagString: Untagged
@@ -649,7 +649,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffcfce0c2c8679d4db5edebf09520acd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
-  isAlreadyOpen: 0
   requiredKeyID: Blue Key
   doorPart: {fileID: 8237545153192632881}
   openRotation: 110
@@ -663,8 +662,10 @@ MonoBehaviour:
   player: {fileID: 0}
   playerInput: {fileID: 0}
   doorCollider: {fileID: 926536116020504954}
---- !u!65 &1126049139765906720
-BoxCollider:
+  rangeCollider: {fileID: 6269069646442342558}
+  teleportCollider: {fileID: 754155851970623830}
+--- !u!135 &6269069646442342558
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -682,8 +683,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.220739, y: 2.9433656, z: 0.570807}
-  m_Center: {x: -0.61036944, y: 0.9716828, z: 0.21459651}
+  m_Radius: 1.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8056677107556886268
 GameObject:
   m_ObjectHideFlags: 0

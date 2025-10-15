@@ -18,9 +18,10 @@ public class Door : MonoBehaviour
     public Transform player;
     public PlayerInput playerInput;
     public Collider doorCollider;
+    public Collider rangeCollider;
+    public Collider teleportCollider;
 
     private InputAction interactAction;
-    private bool isPlayerInRange;
     private bool isOpening;
     private bool isOpen;
     private bool playerPassedThrough;
@@ -38,31 +39,42 @@ public class Door : MonoBehaviour
 
     private void Update()
     {
-        if (isPlayerInRange && !isOpening && !isOpen)
-        {
-            if (KeyInventory.Instance.HasKey(requiredKeyID))
-            {
-                popupText.text = unlockText;
-                popupCanvas.enabled = true;
+        bool isPlayerInRange = rangeCollider.bounds.Contains(player.position);
 
-                if (interactAction.WasPerformedThisFrame())
-                {
-                    isOpening = true;
-                    popupCanvas.enabled = false;
-                    blackBackground.SetActive(true);
-                    KeyInventory.Instance.RemoveKey(requiredKeyID);
-                    player.GetComponentInChildren<Hotbar>()?.Clear();
-                    StartCoroutine(OpenDoor());
-                }
-            }
-            else
-            {
-                popupCanvas.enabled = false;
-            }
+        // Show popup if in range
+        if (isPlayerInRange)
+        {
+            popupCanvas.enabled = true;
+            popupText.text = KeyInventory.Instance.HasKey(requiredKeyID) ? unlockText : "";
         }
         else
         {
             popupCanvas.enabled = false;
+        }
+
+        // Handle door opening
+        if (isPlayerInRange && !isOpening && !isOpen && KeyInventory.Instance.HasKey(requiredKeyID))
+        {
+            if (interactAction.WasPerformedThisFrame())
+            {
+                isOpening = true;
+                popupCanvas.enabled = false;
+                blackBackground.SetActive(true);
+                KeyInventory.Instance.RemoveKey(requiredKeyID);
+                player.GetComponentInChildren<Hotbar>()?.Clear();
+                StartCoroutine(OpenDoor());
+            }
+        }
+
+        // Teleport check using bounds (optional)
+        if (isOpen && !playerPassedThrough && teleportCollider.bounds.Contains(player.position))
+        {
+            playerPassedThrough = true;
+            StartCoroutine(TeleportPlayer());
+        }
+        else if (!teleportCollider.bounds.Contains(player.position))
+        {
+            playerPassedThrough = false;
         }
     }
 
@@ -79,26 +91,6 @@ public class Door : MonoBehaviour
         doorCollider.enabled = true;
         isOpening = false;
         isOpen = true;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.transform == player)
-            isPlayerInRange = true;
-        if (other.transform == player && isOpen && !playerPassedThrough)
-        {
-            playerPassedThrough = true;
-            StartCoroutine(TeleportPlayer());
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.transform == player)
-        {
-            isPlayerInRange = false;
-            playerPassedThrough = false;
-        }
     }
 
     private IEnumerator TeleportPlayer()

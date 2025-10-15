@@ -109,8 +109,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.887731, y: 3.2366304, z: 0.17429861}
-  m_Center: {x: -0.8972101, y: 1.6183152, z: -0.0070495605}
+  m_Size: {x: 1.4740247, y: 2.5273056, z: 0.22}
+  m_Center: {x: -0.70058185, y: 1.2636528, z: -0.007415369}
 --- !u!1 &3464893463609947901
 GameObject:
   m_ObjectHideFlags: 0
@@ -584,7 +584,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7534985539745097521}
   - component: {fileID: 5413678746041900194}
-  - component: {fileID: 2033291939619342119}
+  - component: {fileID: -2113339261589226275}
   m_Layer: 0
   m_Name: Green Door
   m_TagString: Untagged
@@ -636,8 +636,10 @@ MonoBehaviour:
   player: {fileID: 0}
   playerInput: {fileID: 0}
   doorCollider: {fileID: 4247757976305994797}
---- !u!65 &2033291939619342119
-BoxCollider:
+  rangeCollider: {fileID: -2113339261589226275}
+  teleportCollider: {fileID: 8454889686287747193}
+--- !u!135 &-2113339261589226275
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -655,5 +657,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.220739, y: 2.9433656, z: 0.570807}
-  m_Center: {x: -0.61036944, y: 0.9716828, z: 0.21459651}
+  m_Radius: 1.5
+  m_Center: {x: 0, y: 0, z: 0}

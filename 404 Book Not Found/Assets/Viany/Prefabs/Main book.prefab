@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 1182607431343685291}
   - component: {fileID: 3575652708012415085}
   - component: {fileID: 2789267505385182495}
-  - component: {fileID: 5907453476845759169}
   - component: {fileID: 6012741237599491536}
   - component: {fileID: 8316364246521076278}
+  - component: {fileID: 1437457479708371783}
   m_Layer: 0
   m_Name: Main book
   m_TagString: Untagged
@@ -109,27 +109,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookItem
   bookName: Main Book
---- !u!65 &5907453476845759169
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2046081769094460722}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.21407136, y: 0.036802612, z: 0.25000036}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &6012741237599491536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,6 +138,27 @@ MonoBehaviour:
   message: Press E to pick up
   showDistance: 2
   player: {fileID: 0}
+--- !u!135 &1437457479708371783
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046081769094460722}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.3
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4605257736192893178
 GameObject:
   m_ObjectHideFlags: 0
