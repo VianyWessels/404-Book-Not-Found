@@ -290,7 +290,15 @@ public class UIController : MonoBehaviour
             if (settings.enabled)
             {
                 TimeScale(0);
-                GoToMainMenu();
+                if (openedFromPause)
+                {
+                    settings.enabled = false;
+                    pauzeMenu.enabled = true;
+                }
+                else
+                {
+                    GoToMainMenu();
+                }
             }
             else if (AllMenusOff())
             {
