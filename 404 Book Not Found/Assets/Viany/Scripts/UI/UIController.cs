@@ -13,18 +13,14 @@ public class UIController : MonoBehaviour
     [SerializeField] private Canvas pauzeMenu;
     [SerializeField] private Canvas inGameCanvas;
     [SerializeField] private Canvas winScreen;
-
     [SerializeField] private AudioMixer audioMixer;
     [SerializeField] private Slider musicSlider;
     [SerializeField] private Slider sfxSlider;
     [SerializeField] private Toggle fullscreenToggle;
     [SerializeField] private GameObject characterSelectedPanel;
-
     [SerializeField] private InputActionReference resetPrefsAction;
-
     [SerializeField] private LevelSystem levelSystem;
     [SerializeField] private Button[] levelButtons;
-
     private bool openedFromMainMenu;
     private bool openedFromPause;
     private bool characterChosen;
@@ -32,37 +28,29 @@ public class UIController : MonoBehaviour
     void Start()
     {
         TimeScale(0);
-
         mainMenu.enabled = true;
         inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         settings.enabled = false;
         characterSelect.enabled = false;
         levelSelect.enabled = false;
-
         characterChosen = PlayerPrefs.GetInt("CharacterChosen", 0) == 1;
-
         if (characterSelectedPanel != null)
         {
             characterSelectedPanel.SetActive(true);
         }
-
         float musicValue = PlayerPrefs.GetFloat("MusicVolume", 0.75f);
         float sfxValue = PlayerPrefs.GetFloat("SFXVolume", 0.75f);
         bool fullscreen = PlayerPrefs.GetInt("Fullscreen", 1) == 1;
-
         musicSlider.value = musicValue;
         sfxSlider.value = sfxValue;
         fullscreenToggle.isOn = fullscreen;
-
         SetMusicVolume(musicValue);
         SetSFXVolume(sfxValue);
         SetFullscreen(fullscreen);
-
         musicSlider.onValueChanged.AddListener(SetMusicVolume);
         sfxSlider.onValueChanged.AddListener(SetSFXVolume);
         fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
-
         UpdateLevelButtons();
     }
 
@@ -88,7 +76,6 @@ public class UIController : MonoBehaviour
     {
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
-
         inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         characterChosen = false;
@@ -96,26 +83,21 @@ public class UIController : MonoBehaviour
         settings.enabled = false;
         characterSelect.enabled = false;
         levelSelect.enabled = false;
-
         if (characterSelectedPanel != null)
         {
             characterSelectedPanel.SetActive(false);
         }
-
         if (levelSystem != null)
         {
             levelSystem.ResetLevels();
         }
-
         UpdateLevelButtons();
     }
 
     public void OnStartButton()
     {
         TimeScale(0);
-
         mainMenu.enabled = false;
-
         if (!characterChosen)
         {
             openedFromMainMenu = true;
@@ -130,7 +112,6 @@ public class UIController : MonoBehaviour
     private void ShowCharacterSelect()
     {
         TimeScale(0);
-
         inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         characterSelect.enabled = true;
@@ -145,12 +126,10 @@ public class UIController : MonoBehaviour
         PlayerPrefs.SetInt("CharacterChosen", 1);
         PlayerPrefs.Save();
         characterSelect.enabled = false;
-
         if (characterSelectedPanel != null)
         {
             characterSelectedPanel.SetActive(true);
         }
-
         if (openedFromMainMenu)
         {
             ShowLevelSelect();
@@ -164,7 +143,6 @@ public class UIController : MonoBehaviour
     public void OpenCharacterSelect()
     {
         TimeScale(0);
-
         inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         openedFromMainMenu = false;
@@ -177,21 +155,18 @@ public class UIController : MonoBehaviour
     private void ShowLevelSelect()
     {
         TimeScale(0);
-
         inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         levelSelect.enabled = true;
         mainMenu.enabled = false;
         characterSelect.enabled = false;
         settings.enabled = false;
-
         UpdateLevelButtons();
     }
 
     private void UpdateLevelButtons()
     {
         if (levelButtons == null || levelSystem == null) return;
-
         for (int i = 0; i < levelButtons.Length; i++)
         {
             int levelIndex = i + 1;
@@ -213,7 +188,6 @@ public class UIController : MonoBehaviour
     public void StartGame()
     {
         TimeScale(1);
-
         inGameCanvas.enabled = true;
         pauzeMenu.enabled = false;
         mainMenu.enabled = false;
@@ -224,9 +198,7 @@ public class UIController : MonoBehaviour
     {
         TimeScale(0);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-
         settings.enabled = false;
-
         if (openedFromPause)
         {
             TimeScale(0);
@@ -236,7 +208,6 @@ public class UIController : MonoBehaviour
         {
             mainMenu.enabled = true;
         }
-
         inGameCanvas.enabled = false;
         characterSelect.enabled = false;
         levelSelect.enabled = false;
@@ -268,7 +239,6 @@ public class UIController : MonoBehaviour
     public void OpenSettingsFromPause()
     {
         TimeScale(0);
-
         openedFromPause = true;
         pauzeMenu.enabled = false;
         settings.enabled = true;
@@ -277,7 +247,6 @@ public class UIController : MonoBehaviour
     public void OpenSettingsFromMainMenu()
     {
         TimeScale(0);
-
         openedFromPause = false;
         mainMenu.enabled = false;
         settings.enabled = true;
@@ -324,17 +293,15 @@ public class UIController : MonoBehaviour
         }
     }
 
-
     private bool AllMenusOff()
     {
-        return !mainMenu.enabled && !settings.enabled && !characterSelect.enabled && !levelSelect.enabled;
+        return !mainMenu.enabled && !settings.enabled && !characterSelect.enabled && !levelSelect.enabled && !winScreen.enabled;
     }
 
     public void GoToMainMenuFromPause()
     {
         TimeScale(0);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-
         pauzeMenu.enabled = false;
         settings.enabled = false;
         characterSelect.enabled = false;
@@ -351,15 +318,25 @@ public class UIController : MonoBehaviour
     public void RedoLevel()
     {
         Time.timeScale = 1f;
-        var currentLevel = FindFirstObjectByType<LevelSystem>().GetCurrentLevel();
-        PlayerPrefs.SetInt("CurrentLevel", currentLevel);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (levelSystem != null)
+        {
+            int currentLevel = levelSystem.GetCurrentLevel();
+            levelSystem.LoadLevel(currentLevel);
+
+            PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
+            if (playerHealth != null)
+                playerHealth.ResetHealth();
+        }
+
+        if (winScreen != null)
+            winScreen.enabled = false;
+        if (inGameCanvas != null)
+            inGameCanvas.enabled = true;
     }
 
     public void ShowWinScreen()
     {
         TimeScale(0);
-
         inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         winScreen.enabled = true;
@@ -370,21 +347,16 @@ public class UIController : MonoBehaviour
         int currentLevel = levelSystem.GetCurrentLevel();
         levelSystem.UnlockNextLevel(currentLevel);
         winScreen.enabled = false;
-
         GoToMainMenu();
     }
 
     public void OnWinNextLevelButton()
     {
         if (levelSystem == null) return;
-
         int currentLevel = levelSystem.GetCurrentLevel();
         int nextLevel = currentLevel + 1;
-
         levelSystem.UnlockNextLevel(currentLevel);
-
         winScreen.enabled = false;
-
         if (nextLevel <= levelSystem.GetTotalLevels())
         {
             levelSystem.LoadLevel(nextLevel);
