@@ -5,30 +5,32 @@ public class EnemyAI : MonoBehaviour
 {
     public float moveSpeed;
     public float attackRange;
-    public int attackDamage;
-    public float attackCooldown;
     public float bobAmplitude;
     public float bobFrequency;
-    public int maxHealth;
     public float detectionRange;
+    public float minY;
+    public float maxY;
 
-    public float fallSpeedMultiplier;
-    public float minFallTime;
+    public int attackDamage;
+    public float attackCooldown;
+
+    public int maxHealth;
     public float splitForce;
     public float bounceForce;
+    public float minFallTime;
+
     public GameObject leftHalf;
     public GameObject rightHalf;
     public GameObject splitHalo;
     public PlayerHealth playerHealth;
-
-    [SerializeField] private Transform player;
-    [SerializeField] private Rigidbody rb;
-    [SerializeField] private Rigidbody rbLeft;
-    [SerializeField] private Rigidbody rbRight;
-    [SerializeField] private Rigidbody rbSplitHalo;
-    [SerializeField] private Collider mainCollider;
-    [SerializeField] private Renderer enemyRenderer;
-    [SerializeField] private Renderer haloRenderer;
+    public Transform player;
+    public Rigidbody rb;
+    public Rigidbody rbLeft;
+    public Rigidbody rbRight;
+    public Rigidbody rbSplitHalo;
+    public Collider mainCollider;
+    public Renderer enemyRenderer;
+    public Renderer haloRenderer;
 
     private float nextAttackTime;
     private int currentHealth;
@@ -40,17 +42,15 @@ public class EnemyAI : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
-        leftHalf.SetActive(false);
-        rightHalf.SetActive(false);
-        splitHalo.SetActive(false);
+
+        if (leftHalf != null) leftHalf.SetActive(false);
+        if (rightHalf != null) rightHalf.SetActive(false);
+        if (splitHalo != null) splitHalo.SetActive(false);
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if (isDead)
-        {
-            return;
-        }
+        if (isDead || player == null) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
@@ -62,24 +62,41 @@ public class EnemyAI : MonoBehaviour
         {
             MoveAndAttackPlayer(distance);
         }
+
+        Vector3 clampedPos = rb.position;
+        clampedPos.y = Mathf.Clamp(clampedPos.y, minY, maxY);
+        rb.position = clampedPos;
     }
 
     private void IdleBehavior()
     {
+        if (rb == null) return;
+
         float bob = Mathf.Sin(Time.time * bobFrequency) * bobAmplitude;
-        transform.position += new Vector3(0f, bob * Time.deltaTime, 0f);
-        transform.Rotate(Vector3.up * Time.deltaTime * 20f);
+        Vector3 newPos = rb.position + new Vector3(0f, bob * Time.fixedDeltaTime, 0f);
+        rb.MovePosition(newPos);
+
+        rb.MoveRotation(rb.rotation * Quaternion.Euler(0f, 20f * Time.fixedDeltaTime, 0f));
     }
 
     private void MoveAndAttackPlayer(float distance)
     {
-        Vector3 direction = (player.position - transform.position).normalized;
-        transform.position += direction * moveSpeed * Time.deltaTime;
+        if (rb == null) return;
+
+        Vector3 direction = (player.position - rb.position).normalized;
 
         float bob = Mathf.Sin(Time.time * bobFrequency) * bobAmplitude;
-        transform.position += new Vector3(0f, bob * Time.deltaTime, 0f);
+        Vector3 move = direction * moveSpeed * Time.fixedDeltaTime;
+        move.y += bob * Time.fixedDeltaTime;
 
-        transform.LookAt(player);
+        rb.MovePosition(rb.position + move);
+
+        Vector3 lookDir = player.position - rb.position;
+        if (lookDir != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(lookDir);
+            rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, 5f * Time.fixedDeltaTime));
+        }
 
         if (distance <= attackRange && Time.time >= nextAttackTime)
         {
@@ -90,43 +107,48 @@ public class EnemyAI : MonoBehaviour
 
     private void AttackPlayer()
     {
-        playerHealth.TakeDamage(attackDamage);
+        if (playerHealth != null)
+            playerHealth.TakeDamage(attackDamage);
     }
 
     public void TakeDamage(int amount)
     {
-        if (isDead)
-        {
-            return;
-        }
+        if (isDead) return;
 
         currentHealth -= amount;
-
         if (currentHealth <= 0)
-        {
             Die();
-        }
     }
 
     private void Die()
     {
         isDead = true;
-        enemyRenderer.enabled = false;
-        haloRenderer.enabled = false;
-        mainCollider.enabled = false;
 
-        leftHalf.SetActive(true);
-        rightHalf.SetActive(true);
-        splitHalo.SetActive(true);
+        if (enemyRenderer != null) enemyRenderer.enabled = false;
+        if (haloRenderer != null) haloRenderer.enabled = false;
+        if (mainCollider != null) mainCollider.enabled = false;
 
-        rbLeft.linearVelocity = (Vector3.left + Vector3.up) * splitForce;
-        rbLeft.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
+        if (leftHalf != null) leftHalf.SetActive(true);
+        if (rightHalf != null) rightHalf.SetActive(true);
+        if (splitHalo != null) splitHalo.SetActive(true);
 
-        rbRight.linearVelocity = (Vector3.right + Vector3.up) * splitForce;
-        rbRight.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
+        if (rbLeft != null)
+        {
+            rbLeft.linearVelocity = (Vector3.left + Vector3.up * 0.5f) * splitForce;
+            rbLeft.angularVelocity = Random.onUnitSphere * 5f;
+        }
 
-        rbSplitHalo.linearVelocity = (Vector3.right + Vector3.up) * splitForce;
-        rbSplitHalo.angularVelocity = new Vector3(Random.value, Random.value, Random.value);
+        if (rbRight != null)
+        {
+            rbRight.linearVelocity = (Vector3.right + Vector3.up * 0.5f) * splitForce;
+            rbRight.angularVelocity = Random.onUnitSphere * 5f;
+        }
+
+        if (rbSplitHalo != null)
+        {
+            rbSplitHalo.linearVelocity = (Vector3.up + Vector3.forward * 0.5f) * splitForce;
+            rbSplitHalo.angularVelocity = Random.onUnitSphere * 5f;
+        }
 
         StartCoroutine(MonitorFallAndDestroy());
     }
@@ -141,19 +163,19 @@ public class EnemyAI : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            if (!leftBounced)
+            if (rbLeft != null && !leftBounced)
             {
                 rbLeft.linearVelocity = new Vector3(rbLeft.linearVelocity.x, bounceForce, rbLeft.linearVelocity.z);
                 leftBounced = true;
             }
 
-            if (!rightBounced)
+            if (rbRight != null && !rightBounced)
             {
                 rbRight.linearVelocity = new Vector3(rbRight.linearVelocity.x, bounceForce, rbRight.linearVelocity.z);
                 rightBounced = true;
             }
 
-            if (!haloBounced)
+            if (rbSplitHalo != null && !haloBounced)
             {
                 rbSplitHalo.linearVelocity = new Vector3(rbSplitHalo.linearVelocity.x, bounceForce, rbSplitHalo.linearVelocity.z);
                 haloBounced = true;

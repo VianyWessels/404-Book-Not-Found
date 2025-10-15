@@ -297,7 +297,8 @@ public class UIController : MonoBehaviour
                 }
                 else
                 {
-                    GoToMainMenu();
+                    settings.enabled = false;
+                    mainMenu.enabled = true;
                 }
             }
             else if (AllMenusOff())
@@ -307,6 +308,22 @@ public class UIController : MonoBehaviour
             }
         }
     }
+
+    public void ReturnFromSettings()
+    {
+        TimeScale(0);
+        if (openedFromPause)
+        {
+            settings.enabled = false;
+            pauzeMenu.enabled = true;
+        }
+        else
+        {
+            settings.enabled = false;
+            mainMenu.enabled = true;
+        }
+    }
+
 
     private bool AllMenusOff()
     {

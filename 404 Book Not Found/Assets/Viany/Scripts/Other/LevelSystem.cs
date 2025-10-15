@@ -48,7 +48,12 @@ public class LevelSystem : MonoBehaviour
         currentLevel = levelNumber;
         PlayerPrefs.SetInt(CurrentLevelKey, currentLevel);
         PlayerPrefs.Save();
+
         ActivateCurrentLevel();
+
+        PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
+        if (playerHealth != null)
+            playerHealth.ResetHealth();
     }
 
     public void ActivateCurrentLevel()

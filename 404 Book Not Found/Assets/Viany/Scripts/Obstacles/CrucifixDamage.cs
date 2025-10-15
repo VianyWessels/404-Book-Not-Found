@@ -1,40 +1,48 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class CrucifixDamage : MonoBehaviour
 {
     public int damage;
-    public PlayerHealth playerhealth;
-    public Collider rangeCollider;
+    public float damageInterval;
     public LayerMask playerLayer;
-    private WaitForSeconds delay;
 
-    private void Start()
+    private Dictionary<PlayerHealth, float> playersInTrigger = new();
+
+    private void OnTriggerEnter(Collider other)
     {
-        delay = new (0.5f);
-        if (rangeCollider == null)
+        if (((1 << other.gameObject.layer) & playerLayer) != 0)
         {
-            return;
+            PlayerHealth player = other.GetComponent<PlayerHealth>();
+            if (player != null && !playersInTrigger.ContainsKey(player))
+            {
+                playersInTrigger[player] = 0f;
+            }
         }
-
-        StartCoroutine(DamagePlayerOverTime());
     }
 
-    private IEnumerator DamagePlayerOverTime()
+    private void OnTriggerExit(Collider other)
     {
-        while (true)
+        PlayerHealth player = other.GetComponent<PlayerHealth>();
+        if (player != null && playersInTrigger.ContainsKey(player))
         {
-            Vector3 center = rangeCollider.bounds.center;
-            float radius = rangeCollider.bounds.extents.x;
+            playersInTrigger.Remove(player);
+        }
+    }
 
-            Collider[] hits = Physics.OverlapSphere(center, radius, playerLayer);
+    private void Update()
+    {
+        if (playersInTrigger.Count == 0) return;
 
-            foreach (Collider hit in hits)
+        List<PlayerHealth> keys = new(playersInTrigger.Keys);
+        foreach (var player in keys)
+        {
+            playersInTrigger[player] -= Time.deltaTime;
+            if (playersInTrigger[player] <= 0f)
             {
-                playerhealth.TakeDamage(damage);
+                player.TakeDamage(damage);
+                playersInTrigger[player] = damageInterval;
             }
-
-            yield return delay;
         }
     }
 }

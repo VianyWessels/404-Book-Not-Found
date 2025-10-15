@@ -3156,18 +3156,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb52a85ea695fd74ea701398aae48f91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
-  moveSpeed: 1.5
+  moveSpeed: 2
   attackRange: 1
-  attackDamage: 1
-  attackCooldown: 2
   bobAmplitude: 0.5
   bobFrequency: 2
-  maxHealth: 1
   detectionRange: 10
-  fallSpeedMultiplier: 1
-  minFallTime: 2
+  minY: 0.5
+  maxY: 1
+  attackDamage: 1
+  attackCooldown: 2
+  maxHealth: 1
   splitForce: 3
   bounceForce: 1.5
+  minFallTime: 2
   leftHalf: {fileID: 1504293799237521984}
   rightHalf: {fileID: 602965823877885685}
   splitHalo: {fileID: 3904402033826890780}

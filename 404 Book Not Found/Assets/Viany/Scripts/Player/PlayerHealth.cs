@@ -7,8 +7,8 @@ public class PlayerHealth : MonoBehaviour
     private int currentHealth;
 
     public Image[] heartIcons;
-    public Color fullHeart;
-    public Color emptyHeart;
+    public Sprite fullHeart;
+    public Sprite emptyHeart;
     public Animator animator;
 
     public Canvas deathScreen;
@@ -21,8 +21,12 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth = maxHealth;
         UpdateHearts();
-        if (deathScreen != null)
             deathScreen.enabled = false;
+    }
+
+    public bool IsReady()
+    {
+        return animator != null;
     }
 
     public void TakeDamage(int amount)
@@ -43,7 +47,7 @@ public class PlayerHealth : MonoBehaviour
     {
         for (int i = 0; i < heartIcons.Length; i++)
         {
-            heartIcons[i].color = (i < currentHealth) ? fullHeart : emptyHeart;
+            heartIcons[i].sprite = (i < currentHealth) ? fullHeart : emptyHeart;
         }
     }
 
@@ -74,4 +78,11 @@ public class PlayerHealth : MonoBehaviour
     }
 
     public int GetCurrentHealth() => currentHealth;
+
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth;
+        UpdateHearts();
+    }
+
 }
