@@ -3,6 +3,14 @@ using UnityEngine.UI;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using System.Collections;
+
+[System.Serializable]
+public class CharacterImageData
+{
+    public Sprite winSprite;
+    public Sprite deathSprite;
+}
 
 public class UIController : MonoBehaviour
 {
@@ -13,6 +21,10 @@ public class UIController : MonoBehaviour
     [SerializeField] private Canvas pauzeMenu;
     [SerializeField] private Canvas inGameCanvas;
     [SerializeField] private Canvas winScreen;
+    [SerializeField] private Canvas deathScreen;
+    [SerializeField] private CharacterImageData[] characterImages;
+    [SerializeField] private Image winScreenImage;
+    [SerializeField] private Image deathScreenImage;
     [SerializeField] private AudioMixer audioMixer;
     [SerializeField] private Slider musicSlider;
     [SerializeField] private Slider sfxSlider;
@@ -21,12 +33,30 @@ public class UIController : MonoBehaviour
     [SerializeField] private InputActionReference resetPrefsAction;
     [SerializeField] private LevelSystem levelSystem;
     [SerializeField] private Button[] levelButtons;
+
     private bool openedFromMainMenu;
     private bool openedFromPause;
     private bool characterChosen;
 
     void Start()
     {
+        if (PlayerPrefs.GetInt("SkipMainMenu", 0) == 1)
+        {
+            PlayerPrefs.DeleteKey("SkipMainMenu");
+            characterChosen = true;
+            PlayerPrefs.SetInt("CharacterChosen", 1);
+
+            int retryLevel = PlayerPrefs.GetInt("RetryLevel", 1);
+            PlayerPrefs.DeleteKey("RetryLevel");
+
+            levelSystem.LoadLevel(retryLevel);
+            StartGame();
+
+            UpdateCharacterImages();
+
+            return;
+        }
+
         TimeScale(0);
         mainMenu.enabled = true;
         inGameCanvas.enabled = false;
@@ -34,11 +64,13 @@ public class UIController : MonoBehaviour
         settings.enabled = false;
         characterSelect.enabled = false;
         levelSelect.enabled = false;
+        deathScreen.enabled = false;
+        winScreen.enabled = false;
+
         characterChosen = PlayerPrefs.GetInt("CharacterChosen", 0) == 1;
         if (characterSelectedPanel != null)
-        {
             characterSelectedPanel.SetActive(true);
-        }
+
         float musicValue = PlayerPrefs.GetFloat("MusicVolume", 0.75f);
         float sfxValue = PlayerPrefs.GetFloat("SFXVolume", 0.75f);
         bool fullscreen = PlayerPrefs.GetInt("Fullscreen", 1) == 1;
@@ -48,10 +80,12 @@ public class UIController : MonoBehaviour
         SetMusicVolume(musicValue);
         SetSFXVolume(sfxValue);
         SetFullscreen(fullscreen);
+
         musicSlider.onValueChanged.AddListener(SetMusicVolume);
         sfxSlider.onValueChanged.AddListener(SetSFXVolume);
         fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
         UpdateLevelButtons();
+        UpdateCharacterImages();
     }
 
     private void OnEnable()
@@ -84,13 +118,9 @@ public class UIController : MonoBehaviour
         characterSelect.enabled = false;
         levelSelect.enabled = false;
         if (characterSelectedPanel != null)
-        {
             characterSelectedPanel.SetActive(false);
-        }
         if (levelSystem != null)
-        {
             levelSystem.ResetLevels();
-        }
         UpdateLevelButtons();
     }
 
@@ -127,17 +157,12 @@ public class UIController : MonoBehaviour
         PlayerPrefs.Save();
         characterSelect.enabled = false;
         if (characterSelectedPanel != null)
-        {
             characterSelectedPanel.SetActive(true);
-        }
+        UpdateCharacterImages();
         if (openedFromMainMenu)
-        {
             ShowLevelSelect();
-        }
         else
-        {
             GoToMainMenu();
-        }
     }
 
     public void OpenCharacterSelect()
@@ -295,7 +320,7 @@ public class UIController : MonoBehaviour
 
     private bool AllMenusOff()
     {
-        return !mainMenu.enabled && !settings.enabled && !characterSelect.enabled && !levelSelect.enabled && !winScreen.enabled;
+        return !mainMenu.enabled && !settings.enabled && !characterSelect.enabled && !levelSelect.enabled && !winScreen.enabled && !deathScreen.enabled;
     }
 
     public void GoToMainMenuFromPause()
@@ -318,20 +343,14 @@ public class UIController : MonoBehaviour
     public void RedoLevel()
     {
         Time.timeScale = 1f;
-        if (levelSystem != null)
-        {
-            int currentLevel = levelSystem.GetCurrentLevel();
-            levelSystem.LoadLevel(currentLevel);
 
-            PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
-            if (playerHealth != null)
-                playerHealth.ResetHealth();
-        }
+        if (levelSystem == null) return;
 
-        if (winScreen != null)
-            winScreen.enabled = false;
-        if (inGameCanvas != null)
-            inGameCanvas.enabled = true;
+        PlayerPrefs.SetInt("RetryLevel", levelSystem.GetCurrentLevel());
+        PlayerPrefs.SetInt("SkipMainMenu", 1);
+        PlayerPrefs.Save();
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void ShowWinScreen()
@@ -340,6 +359,26 @@ public class UIController : MonoBehaviour
         inGameCanvas.enabled = false;
         pauzeMenu.enabled = false;
         winScreen.enabled = true;
+        UpdateCharacterImages();
+    }
+
+    public void ShowDeathScreen()
+    {
+        TimeScale(0);
+        inGameCanvas.enabled = false;
+        pauzeMenu.enabled = false;
+        deathScreen.enabled = true;
+        UpdateCharacterImages();
+    }
+
+    private void UpdateCharacterImages()
+    {
+        int index = PlayerPrefs.GetInt("SelectedCharacter", 0);
+        if (index >= 0 && index < characterImages.Length)
+        {
+            if (winScreenImage) winScreenImage.sprite = characterImages[index].winSprite;
+            if (deathScreenImage) deathScreenImage.sprite = characterImages[index].deathSprite;
+        }
     }
 
     public void OnWinMainMenuButton()

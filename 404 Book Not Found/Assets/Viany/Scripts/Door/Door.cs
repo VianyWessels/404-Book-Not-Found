@@ -41,7 +41,6 @@ public class Door : MonoBehaviour
     {
         bool isPlayerInRange = rangeCollider.bounds.Contains(player.position);
 
-        // Show popup if in range
         if (isPlayerInRange)
         {
             popupCanvas.enabled = true;
@@ -52,7 +51,6 @@ public class Door : MonoBehaviour
             popupCanvas.enabled = false;
         }
 
-        // Handle door opening
         if (isPlayerInRange && !isOpening && !isOpen && KeyInventory.Instance.HasKey(requiredKeyID))
         {
             if (interactAction.WasPerformedThisFrame())
@@ -66,7 +64,6 @@ public class Door : MonoBehaviour
             }
         }
 
-        // Teleport check using bounds (optional)
         if (isOpen && !playerPassedThrough && teleportCollider.bounds.Contains(player.position))
         {
             playerPassedThrough = true;

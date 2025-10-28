@@ -102,7 +102,7 @@
                 {
                     "name": "",
                     "id": "daeef8a5-80ae-4a6e-860e-2efd1e5626a1",
-                    "path": "<Keyboard>/q",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -124,7 +124,7 @@
                 {
                     "name": "",
                     "id": "5f7ca0fe-1988-4ba6-9545-9b254155940e",
-                    "path": "<Keyboard>/r",
+                    "path": "<Keyboard>/end",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
