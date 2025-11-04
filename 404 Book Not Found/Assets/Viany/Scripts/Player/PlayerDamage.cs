@@ -5,38 +5,39 @@ using System.Collections;
 public class PlayerDamage : MonoBehaviour
 {
     public int attackDamage;
-    public float attackRange;
     public float attackCooldown;
     public float hitboxDuration;
-
     private float nextAttackTime;
     private bool isAttacking;
 
     public GameObject hitboxChild;
     public GameObject weapon;
     public Animator animator;
+    public AudioManager audioManager;
+
+    private PlayerHealth playerHealth;
 
     void Start()
     {
+        playerHealth = GetComponent<PlayerHealth>();
+
         if (hitboxChild != null)
         {
-            BoxCollider hitbox = hitboxChild.GetComponent<BoxCollider>();
-            hitbox.isTrigger = true;
+            var col = hitboxChild.GetComponent<BoxCollider>();
+            if (col != null) col.isTrigger = true;
             hitboxChild.SetActive(false);
         }
-
-        if (weapon != null)
-        {
-            weapon.SetActive(false);
-        }
+        if (weapon != null) weapon.SetActive(false);
     }
 
     public void OnAttack(InputValue value)
     {
-        if (value.isPressed && !isAttacking && Time.time >= nextAttackTime)
-        {
+        if (!enabled || isAttacking || Time.time < nextAttackTime) return;
+
+        if (playerHealth != null && playerHealth.isDead) return;
+
+        if (value.isPressed)
             StartCoroutine(AttackSequence());
-        }
     }
 
     private IEnumerator AttackSequence()
@@ -44,41 +45,22 @@ public class PlayerDamage : MonoBehaviour
         isAttacking = true;
         nextAttackTime = Time.time + attackCooldown;
 
-        if (animator != null)
-        {
-            animator.SetTrigger("Attack");
-        }
-
-        if (weapon != null)
-        {
-            weapon.SetActive(true);
-        }
+        audioManager?.PlayAttack();
+        animator?.SetTrigger("Attack");
+        weapon?.SetActive(true);
 
         if (hitboxChild != null)
         {
-            Hitbox hitboxScript = hitboxChild.GetComponent<Hitbox>();
-            if (hitboxScript != null)
-            {
-                hitboxScript.damage = attackDamage;
-            }
-
+            var hitbox = hitboxChild.GetComponent<Hitbox>();
+            if (hitbox != null) hitbox.damage = attackDamage;
             hitboxChild.SetActive(true);
         }
 
         yield return new WaitForSeconds(hitboxDuration);
+        if (hitboxChild != null) hitboxChild.SetActive(false);
 
-        if (hitboxChild != null)
-        {
-            hitboxChild.SetActive(false);
-        }
-
-        float weaponExtraDuration = 0.75f;
-        yield return new WaitForSeconds(weaponExtraDuration);
-
-        if (weapon != null)
-        {
-            weapon.SetActive(false);
-        }
+        yield return new WaitForSeconds(0.75f);
+        if (weapon != null) weapon.SetActive(false);
 
         isAttacking = false;
     }

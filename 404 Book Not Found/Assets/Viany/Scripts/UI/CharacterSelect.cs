@@ -21,7 +21,7 @@ public class CharacterSelect : MonoBehaviour
     [SerializeField] private float rotationSpeed = 20f;
     [SerializeField] private float slideDuration = 0.5f;
     [SerializeField] private float slideDistance = 3f;
-
+    [SerializeField] private UIController uiController;
     private GameObject[] characters;
     private int currentIndex;
     private float sharedYRotation = 180f;
@@ -35,16 +35,14 @@ public class CharacterSelect : MonoBehaviour
             characters[i] = Instantiate(characterPrefabs[i], characterSpawnPoint.position, Quaternion.Euler(0f, 180f, 0f));
             characters[i].SetActive(false);
         }
-
         currentIndex = PlayerPrefs.GetInt("SelectedCharacter", 0);
+        if (currentIndex >= characters.Length) currentIndex = 0;
         characters[currentIndex].SetActive(true);
-
         UpdateCharacterUI();
         UpdateMainMenuCharacterName();
-
-        leftArrow.onClick.AddListener(() => ChangeCharacter(-1));
-        rightArrow.onClick.AddListener(() => ChangeCharacter(1));
-        confirmButton.onClick.AddListener(ConfirmSelection);
+        if (leftArrow != null) leftArrow.onClick.AddListener(() => ChangeCharacter(-1));
+        if (rightArrow != null) rightArrow.onClick.AddListener(() => ChangeCharacter(1));
+        if (confirmButton != null) confirmButton.onClick.AddListener(ConfirmSelection);
     }
 
     void Update()
@@ -52,7 +50,6 @@ public class CharacterSelect : MonoBehaviour
         if (characters[currentIndex].activeSelf && characterSelectCanvas != null && characterSelectCanvas.enabled && !isSliding)
         {
             sharedYRotation += rotationSpeed * Time.unscaledDeltaTime;
-
             for (int i = 0; i < characters.Length; i++)
             {
                 if (characters[i] != null)
@@ -68,30 +65,24 @@ public class CharacterSelect : MonoBehaviour
     private void ChangeCharacter(int direction)
     {
         if (isSliding) return;
-
         int newIndex = currentIndex + direction;
         if (newIndex < 0) newIndex = characters.Length - 1;
         if (newIndex >= characters.Length) newIndex = 0;
-
         StartCoroutine(SlideToCharacter(newIndex, direction));
     }
 
     private IEnumerator SlideToCharacter(int newIndex, int direction)
     {
         isSliding = true;
-
         GameObject oldCharacter = characters[currentIndex];
         GameObject newCharacter = characters[newIndex];
-
         newCharacter.transform.position = characterSpawnPoint.position + Vector3.right * direction * slideDistance;
         newCharacter.SetActive(true);
-
         float startTime = Time.unscaledTime;
         Vector3 startOld = oldCharacter.transform.position;
         Vector3 endOld = oldCharacter.transform.position - Vector3.right * direction * slideDistance;
         Vector3 startNew = newCharacter.transform.position;
         Vector3 endNew = characterSpawnPoint.position;
-
         while (Time.unscaledTime - startTime < slideDuration)
         {
             float t = (Time.unscaledTime - startTime) / slideDuration;
@@ -99,10 +90,8 @@ public class CharacterSelect : MonoBehaviour
             newCharacter.transform.position = Vector3.Lerp(startNew, endNew, t);
             yield return null;
         }
-
         oldCharacter.SetActive(false);
         currentIndex = newIndex;
-
         UpdateCharacterUI();
         isSliding = false;
     }
@@ -113,7 +102,6 @@ public class CharacterSelect : MonoBehaviour
         {
             characterNameText.text = characterNames[currentIndex];
             characterDescription.text = characterDescriptions[currentIndex];
-
             if (characterImages.Length > currentIndex && characterIcon != null)
                 characterIcon.sprite = characterImages[currentIndex];
         }
@@ -121,7 +109,7 @@ public class CharacterSelect : MonoBehaviour
 
     private void UpdateMainMenuCharacterName()
     {
-        if (characterNames.Length > currentIndex)
+        if (characterNames.Length > currentIndex && mainMenuCharacterNameText != null)
         {
             mainMenuCharacterNameText.text = characterNames[currentIndex];
         }
@@ -131,11 +119,13 @@ public class CharacterSelect : MonoBehaviour
     {
         PlayerPrefs.SetInt("SelectedCharacter", currentIndex);
         PlayerPrefs.Save();
+        if (uiController != null)
+            uiController.SetSelectedCharacterForTutorial(currentIndex);
     }
+
     private void ResetCharacterRotations()
     {
         sharedYRotation = 180f;
-
         for (int i = 0; i < characters.Length; i++)
         {
             if (characters[i] != null)
