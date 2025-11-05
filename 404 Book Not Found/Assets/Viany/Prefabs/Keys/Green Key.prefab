@@ -122,7 +122,7 @@ MonoBehaviour:
   popupCanvas: {fileID: 6491904189314326538}
   popupText: {fileID: 6192364558771070094}
   message: Press E to pick up
-  showDistance: 2
+  showDistance: 1.5
   player: {fileID: 0}
 --- !u!135 &8112431425252023715
 SphereCollider:
