@@ -19,8 +19,8 @@ public class AudioManager : MonoBehaviour
     public AudioMixerGroup musicGroup;
     public bool playMusicOnStart = true;
 
-    private AudioSource[] sfxSources;
-    private AudioSource musicSource;
+    public AudioSource[] sfxSources;
+    public AudioSource musicSource;
     private const int SFX_POOL_SIZE = 12;
 
     private void Awake()
@@ -42,8 +42,7 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        if (playMusicOnStart && ingameBg != null && musicGroup != null)
-            PlayIngameMusic();
+
     }
 
     public void PlayAttack() => PlaySfx(attackSfx);

@@ -46,6 +46,8 @@ public class UIController : MonoBehaviour
     [SerializeField] private LevelSystem levelSystem;
     [SerializeField] private Button[] levelButtons;
     [SerializeField] private PlayerDamage playerDamage;
+    [SerializeField] private AudioManager audioManager;
+
     private bool openedFromMainMenu;
     private bool openedFromPause;
     private bool characterChosen;
@@ -64,8 +66,10 @@ public class UIController : MonoBehaviour
             levelSystem.LoadLevel(retryLevel);
             StartGame();
             UpdateCharacterImages();
+            UpdateMusicBasedOnState();
             return;
         }
+
         TimeScale(0);
         mainMenu.enabled = true;
         inGameCanvas.enabled = false;
@@ -76,25 +80,34 @@ public class UIController : MonoBehaviour
         deathScreen.enabled = false;
         winScreen.enabled = false;
         if (tutorialCanvas != null) tutorialCanvas.enabled = false;
+
         characterChosen = PlayerPrefs.GetInt("CharacterChosen", 0) == 1;
-        if (characterSelectedPanel != null)
-            characterSelectedPanel.SetActive(true);
+        if (characterSelectedPanel != null) characterSelectedPanel.SetActive(true);
+
         float musicValue = PlayerPrefs.GetFloat("MusicVolume", 0.75f);
         float sfxValue = PlayerPrefs.GetFloat("SFXVolume", 0.75f);
         bool fullscreen = PlayerPrefs.GetInt("Fullscreen", 1) == 1;
         musicSlider.value = musicValue;
         sfxSlider.value = sfxValue;
         fullscreenToggle.isOn = fullscreen;
+
         SetMusicVolume(musicValue);
         SetSFXVolume(sfxValue);
         SetFullscreen(fullscreen);
+
         musicSlider.onValueChanged.AddListener(SetMusicVolume);
         sfxSlider.onValueChanged.AddListener(SetSFXVolume);
         fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
+
         UpdateLevelButtons();
         UpdateCharacterImages();
         UpdateAttackState();
         SetupTutorialButtons();
+
+        if (audioManager != null)
+            audioManager.StopMusic(); // Prevent auto-play from AudioManager.Start()
+
+        UpdateMusicBasedOnState(); // Main menu music
     }
 
     private void SetupTutorialButtons()
@@ -102,7 +115,6 @@ public class UIController : MonoBehaviour
         if (leftArrowButton != null) leftArrowButton.onClick.RemoveAllListeners();
         if (rightArrowButton != null) rightArrowButton.onClick.RemoveAllListeners();
         if (exitTutorialButton != null) exitTutorialButton.onClick.RemoveAllListeners();
-
         if (leftArrowButton != null) leftArrowButton.onClick.AddListener(PreviousTutorialPage);
         if (rightArrowButton != null) rightArrowButton.onClick.AddListener(NextTutorialPage);
         if (exitTutorialButton != null) exitTutorialButton.onClick.AddListener(ExitTutorial);
@@ -120,9 +132,9 @@ public class UIController : MonoBehaviour
         else
         {
             levelSystem.LoadLevel(levelIndex);
-            UpdateLevelButtons();
             levelSelect.enabled = false;
             StartGame();
+            UpdateMusicBasedOnState();
         }
     }
 
@@ -136,6 +148,7 @@ public class UIController : MonoBehaviour
             currentTutorialPage = 0;
             UpdateTutorialPage();
         }
+        UpdateMusicBasedOnState();
     }
 
     public void NextTutorialPage()
@@ -177,8 +190,8 @@ public class UIController : MonoBehaviour
     {
         if (tutorialCanvas != null) tutorialCanvas.enabled = false;
         levelSystem.LoadLevel(1);
-        UpdateLevelButtons();
         StartGame();
+        UpdateMusicBasedOnState();
     }
 
     public void SetSelectedCharacterForTutorial(int characterIndex)
@@ -186,7 +199,7 @@ public class UIController : MonoBehaviour
         selectedCharacterIndex = characterIndex;
         PlayerPrefs.SetInt("SelectedCharacter", characterIndex);
         PlayerPrefs.Save();
-        UpdateCharacterImages(); // Always refresh win/death images
+        UpdateCharacterImages();
     }
 
     private void ShowLevelSelect()
@@ -200,8 +213,9 @@ public class UIController : MonoBehaviour
         settings.enabled = false;
         selectedCharacterIndex = PlayerPrefs.GetInt("SelectedCharacter", 0);
         UpdateLevelButtons();
-        UpdateCharacterImages(); // Refresh images every time
+        UpdateCharacterImages();
         UpdateAttackState();
+        UpdateMusicBasedOnState();
     }
 
     private void OnEnable()
@@ -238,6 +252,7 @@ public class UIController : MonoBehaviour
         if (levelSystem != null) levelSystem.ResetLevels();
         UpdateLevelButtons();
         UpdateAttackState();
+        UpdateMusicBasedOnState();
     }
 
     public void OnStartButton()
@@ -265,6 +280,7 @@ public class UIController : MonoBehaviour
         settings.enabled = false;
         levelSelect.enabled = false;
         UpdateAttackState();
+        UpdateMusicBasedOnState();
     }
 
     public void OnCharacterConfirmed()
@@ -290,6 +306,7 @@ public class UIController : MonoBehaviour
         settings.enabled = false;
         levelSelect.enabled = false;
         UpdateAttackState();
+        UpdateMusicBasedOnState();
     }
 
     private void UpdateLevelButtons()
@@ -313,6 +330,7 @@ public class UIController : MonoBehaviour
         mainMenu.enabled = false;
         settings.enabled = false;
         UpdateAttackState();
+        UpdateMusicBasedOnState();
     }
 
     public void GoToMainMenu()
@@ -333,6 +351,7 @@ public class UIController : MonoBehaviour
         characterSelect.enabled = false;
         levelSelect.enabled = false;
         UpdateAttackState();
+        UpdateMusicBasedOnState();
     }
 
     public void QuitGame()
@@ -365,6 +384,7 @@ public class UIController : MonoBehaviour
         pauzeMenu.enabled = false;
         settings.enabled = true;
         UpdateAttackState();
+        UpdateMusicBasedOnState();
     }
 
     public void OpenSettingsFromMainMenu()
@@ -374,6 +394,7 @@ public class UIController : MonoBehaviour
         mainMenu.enabled = false;
         settings.enabled = true;
         UpdateAttackState();
+        UpdateMusicBasedOnState();
     }
 
     private void Update()
@@ -394,12 +415,14 @@ public class UIController : MonoBehaviour
                     mainMenu.enabled = true;
                 }
                 UpdateAttackState();
+                UpdateMusicBasedOnState();
             }
             else if (AllMenusOff())
             {
                 TimeScale(0);
                 pauzeMenu.enabled = true;
                 UpdateAttackState();
+                UpdateMusicBasedOnState();
             }
         }
     }
@@ -418,12 +441,14 @@ public class UIController : MonoBehaviour
             mainMenu.enabled = true;
         }
         UpdateAttackState();
+        UpdateMusicBasedOnState();
     }
 
     private bool AllMenusOff()
     {
         return !mainMenu.enabled && !settings.enabled && !characterSelect.enabled && !levelSelect.enabled &&
-               !winScreen.enabled && !deathScreen.enabled && !tutorialCanvas.enabled;
+               !pauzeMenu.enabled && !winScreen.enabled && !deathScreen.enabled &&
+               (tutorialCanvas == null || !tutorialCanvas.enabled);
     }
 
     public void GoToMainMenuFromPause()
@@ -437,6 +462,7 @@ public class UIController : MonoBehaviour
         mainMenu.enabled = true;
         openedFromPause = false;
         UpdateAttackState();
+        UpdateMusicBasedOnState();
     }
 
     public void TimeScale(int scale)
@@ -462,6 +488,7 @@ public class UIController : MonoBehaviour
         winScreen.enabled = true;
         UpdateCharacterImages();
         UpdateAttackState();
+        UpdateMusicBasedOnState();
     }
 
     public void ShowDeathScreen()
@@ -472,6 +499,7 @@ public class UIController : MonoBehaviour
         deathScreen.enabled = true;
         UpdateCharacterImages();
         UpdateAttackState();
+        UpdateMusicBasedOnState();
     }
 
     private void UpdateCharacterImages()
@@ -519,5 +547,29 @@ public class UIController : MonoBehaviour
     {
         if (playerDamage != null)
             playerDamage.enabled = AllMenusOff() && inGameCanvas.enabled;
+    }
+
+    private void UpdateMusicBasedOnState()
+    {
+        if (audioManager == null) return;
+
+        bool inGameplay = inGameCanvas.enabled && AllMenusOff();
+
+        if (inGameplay)
+        {
+            if (audioManager.musicSource.clip != audioManager.ingameBg || !audioManager.musicSource.isPlaying)
+            {
+                audioManager.musicSource.clip = audioManager.ingameBg;
+                audioManager.musicSource.Play();
+            }
+        }
+        else
+        {
+            if (audioManager.musicSource.clip != audioManager.mainMenuBg || !audioManager.musicSource.isPlaying)
+            {
+                audioManager.musicSource.clip = audioManager.mainMenuBg;
+                audioManager.musicSource.Play();
+            }
+        }
     }
 }
