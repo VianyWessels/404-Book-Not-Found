@@ -53,6 +53,8 @@ public class UIController : MonoBehaviour
     private bool characterChosen;
     private int currentTutorialPage = 0;
     private int selectedCharacterIndex = 0;
+    private bool winSoundPlayed;
+    private bool loseSoundPlayed;
 
     void Start()
     {
@@ -105,9 +107,9 @@ public class UIController : MonoBehaviour
         SetupTutorialButtons();
 
         if (audioManager != null)
-            audioManager.StopMusic(); // Prevent auto-play from AudioManager.Start()
+            audioManager.StopMusic();
 
-        UpdateMusicBasedOnState(); // Main menu music
+        UpdateMusicBasedOnState();
     }
 
     private void SetupTutorialButtons()
@@ -253,6 +255,8 @@ public class UIController : MonoBehaviour
         UpdateLevelButtons();
         UpdateAttackState();
         UpdateMusicBasedOnState();
+        winSoundPlayed = false;
+        loseSoundPlayed = false;
     }
 
     public void OnStartButton()
@@ -329,6 +333,8 @@ public class UIController : MonoBehaviour
         pauzeMenu.enabled = false;
         mainMenu.enabled = false;
         settings.enabled = false;
+        winSoundPlayed = false;
+        loseSoundPlayed = false;
         UpdateAttackState();
         UpdateMusicBasedOnState();
     }
@@ -424,6 +430,18 @@ public class UIController : MonoBehaviour
                 UpdateAttackState();
                 UpdateMusicBasedOnState();
             }
+        }
+
+        if (winScreen.enabled && !winSoundPlayed && audioManager != null)
+        {
+            audioManager.PlayWin();
+            winSoundPlayed = true;
+        }
+
+        if (deathScreen.enabled && !loseSoundPlayed && audioManager != null)
+        {
+            audioManager.PlayLose();
+            loseSoundPlayed = true;
         }
     }
 

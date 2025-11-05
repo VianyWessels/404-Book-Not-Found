@@ -20,7 +20,7 @@ public class Door : MonoBehaviour
     public Collider doorCollider;
     public Collider rangeCollider;
     public Collider teleportCollider;
-
+    [SerializeField] private AudioManager audioManager;
     private InputAction interactAction;
     private bool isOpening;
     private bool isOpen;
@@ -40,7 +40,6 @@ public class Door : MonoBehaviour
     private void Update()
     {
         bool isPlayerInRange = rangeCollider.bounds.Contains(player.position);
-
         if (isPlayerInRange)
         {
             popupCanvas.enabled = true;
@@ -50,7 +49,6 @@ public class Door : MonoBehaviour
         {
             popupCanvas.enabled = false;
         }
-
         if (isPlayerInRange && !isOpening && !isOpen && KeyInventory.Instance.HasKey(requiredKeyID))
         {
             if (interactAction.WasPerformedThisFrame())
@@ -60,10 +58,10 @@ public class Door : MonoBehaviour
                 blackBackground.SetActive(true);
                 KeyInventory.Instance.RemoveKey(requiredKeyID);
                 player.GetComponentInChildren<Hotbar>()?.Clear();
+                audioManager?.PlayDoorOpen();
                 StartCoroutine(OpenDoor());
             }
         }
-
         if (isOpen && !playerPassedThrough && teleportCollider.bounds.Contains(player.position))
         {
             playerPassedThrough = true;

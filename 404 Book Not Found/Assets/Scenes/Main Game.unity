@@ -307,7 +307,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -32877,7 +32877,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -34917,7 +34917,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -35940,6 +35940,10 @@ PrefabInstance:
       propertyPath: playerInput
       value: 
       objectReference: {fileID: 845534268790940559}
+    - target: {fileID: 3276287473225127002, guid: fcdcba10ca517474f83b8cf68480c707, type: 3}
+      propertyPath: audioManager
+      value: 
+      objectReference: {fileID: 1785314429}
     - target: {fileID: 3276287473225127002, guid: fcdcba10ca517474f83b8cf68480c707, type: 3}
       propertyPath: cameraTarget
       value: 
@@ -52446,6 +52450,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 845534268790940559}
     - target: {fileID: 5413678746041900194, guid: 711da126e9d80074b8267496fcc16d5f, type: 3}
+      propertyPath: audioManager
+      value: 
+      objectReference: {fileID: 1785314429}
+    - target: {fileID: 5413678746041900194, guid: 711da126e9d80074b8267496fcc16d5f, type: 3}
       propertyPath: cameraTarget
       value: 
       objectReference: {fileID: 572880502}
@@ -53473,7 +53481,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -54823,7 +54831,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -60171,7 +60179,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -63714,7 +63722,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -67503,7 +67511,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &802764136
 Transform:
   m_ObjectHideFlags: 0
@@ -80467,6 +80475,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 845534268790940559}
     - target: {fileID: 2817338212243448807, guid: e17f8d3d79153d94194e8a69e7067b2d, type: 3}
+      propertyPath: audioManager
+      value: 
+      objectReference: {fileID: 1785314429}
+    - target: {fileID: 2817338212243448807, guid: e17f8d3d79153d94194e8a69e7067b2d, type: 3}
       propertyPath: cameraTarget
       value: 
       objectReference: {fileID: 1668930441}
@@ -81375,10 +81387,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 1129863615}
   m_HandleRect: {fileID: 86102631}
   m_Direction: 0
-  m_MinValue: 0
+  m_MinValue: 0.01
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -83637,7 +83649,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -99595,6 +99607,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 845534268790940559}
     - target: {fileID: 1656300465322091982, guid: 34ed6dd28f6e7e2499729096e4cd20de, type: 3}
+      propertyPath: audioManager
+      value: 
+      objectReference: {fileID: 1785314429}
+    - target: {fileID: 1656300465322091982, guid: 34ed6dd28f6e7e2499729096e4cd20de, type: 3}
       propertyPath: cameraTarget
       value: 
       objectReference: {fileID: 641749819}
@@ -100906,6 +100922,10 @@ PrefabInstance:
       propertyPath: playerInput
       value: 
       objectReference: {fileID: 845534268790940559}
+    - target: {fileID: 2817338212243448807, guid: e17f8d3d79153d94194e8a69e7067b2d, type: 3}
+      propertyPath: audioManager
+      value: 
+      objectReference: {fileID: 1785314429}
     - target: {fileID: 2817338212243448807, guid: e17f8d3d79153d94194e8a69e7067b2d, type: 3}
       propertyPath: cameraTarget
       value: 
@@ -104091,7 +104111,7 @@ MonoBehaviour:
   - {fileID: 1565656837}
   - {fileID: 1422187449}
   playerDamage: {fileID: 5738234159354285267}
-  audioManager: {fileID: 0}
+  audioManager: {fileID: 1785314429}
 --- !u!4 &1264494473 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7599353169631147918, guid: 24641b798df1f0648b1c78308c53c5e6, type: 3}
@@ -109376,10 +109396,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 1464654862}
   m_HandleRect: {fileID: 49588250}
   m_Direction: 0
-  m_MinValue: 0
+  m_MinValue: 0.01
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -109734,6 +109754,10 @@ PrefabInstance:
       propertyPath: playerInput
       value: 
       objectReference: {fileID: 845534268790940559}
+    - target: {fileID: 1656300465322091982, guid: 34ed6dd28f6e7e2499729096e4cd20de, type: 3}
+      propertyPath: audioManager
+      value: 
+      objectReference: {fileID: 1785314429}
     - target: {fileID: 1656300465322091982, guid: 34ed6dd28f6e7e2499729096e4cd20de, type: 3}
       propertyPath: cameraTarget
       value: 
@@ -111369,6 +111393,18 @@ MonoBehaviour:
       - m_Target: {fileID: 1263968606}
         m_TargetAssemblyTypeName: UIController, Assembly-CSharp
         m_MethodName: ExitTutorial
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1785314429}
+        m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
+        m_MethodName: PlayUIButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -117466,7 +117502,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -117668,7 +117704,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -119430,7 +119466,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -122888,7 +122924,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -125120,7 +125156,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -125782,7 +125818,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -126102,6 +126138,10 @@ PrefabInstance:
       propertyPath: playerInput
       value: 
       objectReference: {fileID: 845534268790940559}
+    - target: {fileID: 3276287473225127002, guid: fcdcba10ca517474f83b8cf68480c707, type: 3}
+      propertyPath: audioManager
+      value: 
+      objectReference: {fileID: 1785314429}
     - target: {fileID: 3276287473225127002, guid: fcdcba10ca517474f83b8cf68480c707, type: 3}
       propertyPath: cameraTarget
       value: 
@@ -127355,7 +127395,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1579089801
 Transform:
   m_ObjectHideFlags: 0
@@ -130560,7 +130600,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -135340,7 +135380,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -137321,7 +137361,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -140696,7 +140736,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -149425,7 +149465,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -150064,7 +150104,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1785314429}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
         m_MethodName: PlayUIButton
         m_Mode: 1
@@ -155661,6 +155701,10 @@ PrefabInstance:
       propertyPath: playerInput
       value: 
       objectReference: {fileID: 845534268790940559}
+    - target: {fileID: 5413678746041900194, guid: 711da126e9d80074b8267496fcc16d5f, type: 3}
+      propertyPath: audioManager
+      value: 
+      objectReference: {fileID: 1785314429}
     - target: {fileID: 5413678746041900194, guid: 711da126e9d80074b8267496fcc16d5f, type: 3}
       propertyPath: cameraTarget
       value: 
@@ -162500,6 +162544,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 845534268790940559}
     - target: {fileID: 3276287473225127002, guid: fcdcba10ca517474f83b8cf68480c707, type: 3}
+      propertyPath: audioManager
+      value: 
+      objectReference: {fileID: 1785314429}
+    - target: {fileID: 3276287473225127002, guid: fcdcba10ca517474f83b8cf68480c707, type: 3}
       propertyPath: cameraTarget
       value: 
       objectReference: {fileID: 764293692}
@@ -166825,6 +166873,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 845534268790940559}
     - target: {fileID: 3276287473225127002, guid: fcdcba10ca517474f83b8cf68480c707, type: 3}
+      propertyPath: audioManager
+      value: 
+      objectReference: {fileID: 1785314429}
+    - target: {fileID: 3276287473225127002, guid: fcdcba10ca517474f83b8cf68480c707, type: 3}
       propertyPath: cameraTarget
       value: 
       objectReference: {fileID: 526019715}
@@ -168336,6 +168388,10 @@ PrefabInstance:
       propertyPath: playerInput
       value: 
       objectReference: {fileID: 845534268790940559}
+    - target: {fileID: 1656300465322091982, guid: 34ed6dd28f6e7e2499729096e4cd20de, type: 3}
+      propertyPath: audioManager
+      value: 
+      objectReference: {fileID: 1785314429}
     - target: {fileID: 1656300465322091982, guid: 34ed6dd28f6e7e2499729096e4cd20de, type: 3}
       propertyPath: cameraTarget
       value: 
@@ -173356,6 +173412,7 @@ MonoBehaviour:
   pickupOnEnter: 0
   hotbar: {fileID: 9166775685947286237}
   playerInput: {fileID: 845534268790940559}
+  audioManager: {fileID: 1785314429}
 --- !u!114 &9166775685947286236
 MonoBehaviour:
   m_ObjectHideFlags: 0

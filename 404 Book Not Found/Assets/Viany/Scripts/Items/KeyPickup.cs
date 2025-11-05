@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 [RequireComponent(typeof(SphereCollider))]
 public class KeyPickup : MonoBehaviour
 {
@@ -8,6 +7,7 @@ public class KeyPickup : MonoBehaviour
     public bool pickupOnEnter = false;
     public Hotbar hotbar;
     public PlayerInput playerInput;
+    [SerializeField] private AudioManager audioManager;
     private InputAction interactAction;
 
     private void Awake()
@@ -44,6 +44,7 @@ public class KeyPickup : MonoBehaviour
         }
         KeyInventory.Instance.AddKey(key.keyID);
         hotbar.SetKey(key);
+        audioManager?.PlayPickup();
         Destroy(key.gameObject);
         currentKeyInRange = null;
     }
@@ -54,7 +55,10 @@ public class KeyPickup : MonoBehaviour
         if (key != null)
         {
             currentKeyInRange = key;
-            if (pickupOnEnter) Pickup(key);
+            if (pickupOnEnter)
+            {
+                Pickup(key);
+            }
         }
     }
 
